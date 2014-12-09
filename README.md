@@ -40,10 +40,10 @@ _* If admin@example.com does not work as the username, check_ **/config/config.j
 
 ## Developers - Getting Started:
 
-1. Clone the webapp repo from [Github](https://github.com/hserang/gatewayd-admin-seeds):
+1. Clone the webapp repo from [Github](https://github.com/gatewayd/gatewayd-basic-admin):
 
     ```
-    $ git clone git@github.com:hserang/gatewayd-admin-seeds.git
+    $ git clone git@github.com:gatewayd/gatewayd-basic-admin.git
     ```
 2. Navigate to the cloned directory and install its dependencies:
 
