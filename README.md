@@ -1,4 +1,4 @@
-# Gatewayd Basic Admin Webapp
+# Gatewayd Basic App
 
 [http://gatewayd.org/tools/basic](http://gatewayd.org/tools/basic)
 
@@ -40,10 +40,10 @@ _* If admin@example.com does not work as the username, check_ **/config/config.j
 
 ## Developers - Getting Started:
 
-1. Clone the webapp repo from [Github](https://github.com/gatewayd/gatewayd-basic-admin):
+1. Clone the webapp repo from [Github](https://github.com/gatewayd/gatewayd-basic-app):
 
     ```
-    $ git clone git@github.com:gatewayd/gatewayd-basic-admin.git
+    $ git clone git@github.com:gatewayd/gatewayd-basic-app.git
     ```
 2. Navigate to the cloned directory and install its dependencies:
 
