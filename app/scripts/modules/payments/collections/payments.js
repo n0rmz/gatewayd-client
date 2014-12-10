@@ -107,39 +107,38 @@ var Payments = Backbone.Collection.extend({
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
-      }
-    })
-    .then(function() {
+      },
+      success: function() {
+        // 'new' attribute is reset for all existing payment models
+        if (!ids.length) {
+          _this.models.forEach(function(model) {
+            model.set('new', false);
+          });
 
-      // 'new' attribute is reset for all existing payment models
-      if (!ids.length) {
-        _this.models.forEach(function(model) {
-          model.set('new', false);
+          return true;
+        }
+
+        // array of current payment ids after fetch
+        var newIds = _.map(_this.models, function(model) {
+          return model.get('id');
         });
 
-        return true;
+        // array of payment ids existing only in newIds
+        var diffIds = _.reject(newIds, function(id) {
+          return ids.indexOf(id) > -1;
+        });
+
+        _this.models.forEach(function(model) {
+
+          // payments whose model Ids are in diffIds get a 'new' attribute
+          // 'new' models will be highlighted
+          if (diffIds.indexOf(model.get('id')) > -1) {
+            model.set('new', true);
+          } else {
+            model.set('new', false);
+          }
+        });
       }
-
-      // array of current payment ids after fetch
-      var newIds = _.map(_this.models, function(model) {
-        return model.get('id');
-      });
-
-      // array of payment ids existing only in newIds
-      var diffIds = _.reject(newIds, function(id) {
-        return ids.indexOf(id) > -1;
-      });
-
-      _this.models.forEach(function(model) {
-
-        // payments whose model Ids are in diffIds get a 'new' attribute
-        // 'new' models will be highlighted
-        if (diffIds.indexOf(model.get('id')) > -1) {
-          model.set('new', true);
-        } else {
-          model.set('new', false);
-        }
-      });
     });
   },
 
@@ -153,12 +152,12 @@ var Payments = Backbone.Collection.extend({
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
-      }
-    })
-    .then(function() {
+      },
+      success: function() {
 
-      // poll status of sent payment until failed/succeeded to see changes
-      _this.get(paymentData.id).pollStatus();
+        // poll status of sent payment until failed/succeeded to see changes
+        _this.get(paymentData.id).pollStatus();
+      }
     });
   }
 });

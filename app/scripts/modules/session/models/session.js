@@ -92,11 +92,11 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
+      },
+      success: function() {
+        _this.get('userModel').set({isLoggedIn: true});
+        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
       }
-    })
-    .then(function() {
-      _this.get('userModel').set({isLoggedIn: true});
-      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
     });
   },
 
