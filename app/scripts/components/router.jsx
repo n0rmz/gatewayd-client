@@ -45,13 +45,13 @@ var App = require('./app.jsx');
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={Payments} />
+    <DefaultRoute handler={SessionComponent} />
     <Route name="login" handler={SessionComponent} />
     <Route name="logout" handler={SessionComponent} />
     <Route name="payments" path="payments/:direction/:state" handler={Payments}/>
     <Route name="notFound" handler={NotFound} />
     <NotFoundRoute handler={NotFound} />
-    <Redirect from="/" to="/payments/outgoing/all" />
+    <Redirect from="/" to="/login" />
   </Route>
 );
 
