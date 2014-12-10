@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var url = require('url');
+var Backbone= require('backbone');
 
 var React = require('react');
 var DocumentTitle = require('react-document-title');
@@ -36,27 +37,28 @@ var Payments = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('sync change', this.handleCollectionSync);
+    collection.on('sync', this.handleCollectionSync);
     paymentActions.updateUrl(this.getPath());
   },
 
   componentWillUnmount: function() {
-    collection.off('sync change');
+    collection.off('sync');
   },
 
-  handleCollectionSync: function(collection) {
+  // @data payment collection or model
+  handleCollectionSync: function(data) {
 
-    // model syncs bubble up through collection and are passed into this handler as well
-    if (_.isUndefined(collection.length)) {
+    // TODO - is there a better way to handle separation of collection vs model syncs?
+    if (data instanceof Backbone.Model) {
 
-      // *NOTE*
-      // The 'payments' state is tied to the collection, so collection changes
-      // will re-render automatically (as if this.setState() was invoked).
-      // But when individual models within the collection are changed,
-      // this component is not automatically re-rendered.
+      // changing a model in the collection/state won't trigger a re-render
       this.forceUpdate();
 
       return false;
+    } else {
+      this.setState({
+        payments: data
+      });
     }
   },
 
