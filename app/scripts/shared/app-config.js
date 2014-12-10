@@ -1,6 +1,13 @@
+/*
+  example config: {
+    baseName: 'admin@example.com',
+    baseUrl: 'https://localhost:5000'
+  }
+*/
+
 var config = {
-  baseName: 'admin@example.com',
-  baseUrl: 'https://localhost:5000'
+  baseName: '',
+  baseUrl: ''
 };
 
 module.exports = config;
