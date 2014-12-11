@@ -16,20 +16,6 @@ var actions = {
     });
   },
 
-  retryFailedPayment: function(id) {
-    adminDispatcher.handleEvent({
-      actionType: paymentActions.retryFailedPayment,
-      data: id
-    });
-  },
-
-  filterByState: function(state) {
-    adminDispatcher.handleEvent({
-      actionType: paymentActions.filterByState,
-      data: state
-    });
-  },
-
   sendPaymentAttempt: function(payment) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.sendPaymentAttempt,
@@ -44,9 +30,9 @@ var actions = {
     });
   },
 
-  fetchRippleTransactions: function() {
+  fetchExternalTransactions: function() {
     adminDispatcher.handleEvent({
-      actionType: paymentActions.fetchRippleTransactions
+      actionType: paymentActions.fetchExternalTransactions
     });
   }
 };

@@ -45,36 +45,20 @@ describe('Payment Model:', function() {
   describe('should have required attributes:', function() {
     beforeEach(setUpSuccessfulModel);
 
-    it('has to_address_id', function() {
-      this.model.get('to_address_id').should.exist;
+    it('has amount', function() {
+      this.model.get('amount').should.exist;
     });
 
-    it('has from_address_id', function() {
-      this.model.get('from_address_id').should.exist;
+    it('has currency', function() {
+      this.model.get('currency').should.exist;
     });
 
-    it('has to_amount', function() {
-      this.model.get('to_amount').should.exist;
+    it('has deposit', function() {
+      this.model.get('deposit').should.exist;
     });
 
-    it('has to_currency', function() {
-      this.model.get('to_currency').should.exist;
-    });
-
-    it('has to_issuer', function() {
-      this.model.get('to_issuer').should.exist;
-    });
-
-    it('has from_amount', function() {
-      this.model.get('from_amount').should.exist;
-    });
-
-    it('has from_currency', function() {
-      this.model.get('from_currency').should.exist;
-    });
-
-    it('has from_issuer', function() {
-      this.model.get('from_issuer').should.exist;
+    it('has external_account_id', function() {
+      this.model.get('external_account_id').should.exist;
     });
   });
 });

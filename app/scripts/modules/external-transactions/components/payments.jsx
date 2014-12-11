@@ -62,29 +62,25 @@ var Payments = React.createClass({
     }
   },
 
-  handleRetryButtonClick: function(id) {
-    paymentActions.retryFailedPayment(id);
-  },
-
-  directionMap: {
-    incoming: "from-ripple",
-    outgoing: "to-ripple"
-  },
-
-  createTitle: function(direction) {
-    direction = direction || 'incoming';
+  createTitle: function(paymentType) {
+    paymentType = paymentType || 'Deposits';
 
     var titleMap = {
-      incoming: 'Received Payments',
-      outgoing: 'Sent Payments'
+      deposits: 'Deposits',
+      withdrawals: 'Withdrawals'
     };
 
-    return titleMap[direction];
+    return titleMap[paymentType];
+  },
+
+  paymentTypeMap: {
+    deposits: true,
+    withdrawals: false
   },
 
   render: function() {
     var _this = this,
-        direction = this.getParams().direction,
+        paymentType = this.getParams().paymentType,
         state = this.getParams().state,
         tertiaryNav;
 
@@ -92,52 +88,49 @@ var Payments = React.createClass({
     // We could keep different collections for each type, but it depends on use case.
     var paymentItems = this.state.payments.chain()
       .filter(function(model) {
-        return model.get('direction') === _this.directionMap[direction];
+        return model.get('deposit') === _this.paymentTypeMap[paymentType];
       })
       .filter(function(model) {
-        return state === 'all'? true : model.get('state') === state;
+        return state === 'all'? true : model.get('status') === state;
       })
       .map(function(model) {
         return (
           <PaymentItem
             key={model.get('id')}
             model={model}
-            retryButtonClickHandler={this.handleRetryButtonClick}
           />
         );
     }, this);
 
     //todo make separate component with iterator. Oy.
-    if (direction === 'incoming') {
+    if (paymentType === 'deposits') {
       tertiaryNav = (
         <div className="nav-tertiary">
-          <Link to='payments' params={{direction: 'incoming', state: 'all'}}>All</Link>
-          <Link to='payments' params={{direction: 'incoming', state: 'incoming'}}>Queued</Link>
-          <Link to='payments' params={{direction: 'incoming', state: 'succeeded'}}>Succeeded</Link>
+          <Link to='payments' params={{paymentType: 'deposits', state: 'all'}}>All</Link>
+          <Link to='payments' params={{paymentType: 'deposits', state: 'queued'}}>Queued</Link>
+          <Link to='payments' params={{paymentType: 'deposits', state: 'cleared'}}>Cleared</Link>
         </div>);
     } else {
       tertiaryNav = (
         <div className="nav-tertiary">
-          <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>All</Link>
-          <Link to='payments' params={{direction: 'outgoing', state: 'outgoing'}}>Queued</Link>
-          <Link to='payments' params={{direction: 'outgoing', state: 'pending'}}>Pending</Link>
-          <Link to='payments' params={{direction: 'outgoing', state: 'succeeded'}}>Succeeded</Link>
-          <Link to='payments' params={{direction: 'outgoing', state: 'failed'}}>Failed</Link>
+          <Link to='payments' params={{paymentType: 'withdrawals', state: 'all'}}>All</Link>
+          <Link to='payments' params={{paymentType: 'withdrawals', state: 'queued'}}>Queued</Link>
+          <Link to='payments' params={{paymentType: 'withdrawals', state: 'cleared'}}>Cleared</Link>
         </div>);
     }
 
     return (
-      <DocumentTitle title={this.createTitle(direction)}>
+      <DocumentTitle title={this.createTitle(paymentType)}>
         <div>
           <div className="row">
             <div className="col-sm-12 col-xs-12">
               <h1>Payments:
                 <span className="header-links">
-                  <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>
-                    Sent
+                  <Link to='payments' params={{paymentType: 'withdrawals', state: 'all'}}>
+                    Outbound
                   </Link>
-                  <Link to='payments' params={{direction: 'incoming', state: 'all'}}>
-                    Received
+                  <Link to='payments' params={{paymentType: 'deposits', state: 'all'}}>
+                    Inbound
                   </Link>
                   <ModalTrigger modal={<PaymentCreateForm model={paymentCreateFormModel} />}>
                     <a>Send Payment</a>
@@ -153,7 +146,7 @@ var Payments = React.createClass({
           </div>
           <div className="row">
             <ul className="list-group">
-            {paymentItems}
+              {paymentItems}
             </ul>
           </div>
         </div>

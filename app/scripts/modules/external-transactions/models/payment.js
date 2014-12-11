@@ -18,49 +18,31 @@ Backbone.$ = $;
 var Payment = Backbone.Model.extend({
   defaults: {
     id: 0,
-    createdAt: 0,
-    updatedAt: 0,
-    uid: 0,
-    client_resource_id: 0,
-    to_address_id: 0,
-    from_address_id: 0,
-    to_amount: 0.0,
-    to_currency: '',
-    to_issuer: '',
-    from_amount: 0.0,
-    from_currency: '',
-    from_issuer: '',
-    transaction_state: '',
-    transaction_hash: '',
+    amount: 0.0,
+    currency: '',
+    deposit: true,
+    external_account_id: 0,
+    status: '',
+    ripple_transaction_id: 0,
+    uid: '',
     data: '',
-    state: '',
-    external_transaction_id: 0
+    invoice_id: '',
+    to_account_id: 0,
+    from_account_id: 0
   },
 
   validationRules: {
-    to_address_id: {
-      validators: ['isRequired', 'isNumber'] // int
+    amount: {
+      validators: ['isRequired', 'isNumber']
     },
-    from_address_id: {
-      validators: ['isRequired', 'isNumber'] // int
-    },
-    to_amount: {
-      validators: ['isRequired', 'isNumber'] // decimal
-    },
-    to_currency: {
+    currency: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
-    to_issuer: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+    deposit: {
+      validators: ['isRequired', 'isBoolean']
     },
-    from_amount: {
-      validators: ['isRequired', 'isNumber'] // decimal
-    },
-    from_currency: {
-      validators: ['isRequired', 'isString', 'minLength:1']
-    },
-    from_issuer: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+    external_account_id: {
+      validators: ['isRequired', 'isNumber']
     }
   },
 
@@ -73,8 +55,6 @@ var Payment = Backbone.Model.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[paymentConfigActions.retryFailedPayment] = this.retryFailedPayment;
-
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
@@ -86,19 +66,19 @@ var Payment = Backbone.Model.extend({
       return data;
     }
 
-    return data.ripple_transaction;
+    return data.external_transaction;
   },
 
   checkPollCompletion: function(model) {
-    if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
+    if (model.get('status') === 'cleared') {
       pollingHeart.clearEvents();
-      this.trigger('retryStop');
+      this.trigger('pollingStop');
     }
   },
 
   pollStatusHelper: function() {
     this.fetch({
-      url: session.get('gatewaydUrl') + '/v1/ripple_transactions/' + this.get('id'),
+      url: session.get('gatewaydUrl') + '/v1/external_transactions/' + this.get('id'),
       dataType: 'json',
       contentType: 'application/json',
       headers: {
@@ -113,30 +93,14 @@ var Payment = Backbone.Model.extend({
 
     // update displayed payment information every interval to watch status changes
     pollingHeart.onBeat(1, this.pollStatusHelper);
-    pollingHeart.onceOnBeat(0, this.trigger('retryStart'));
+    pollingHeart.onceOnBeat(0, this.trigger('pollingStart'));
 
     // stop polling after 10 intervals
     pollingHeart.onceOnBeat(10, function() {
       pollingHeart.clearEvents();
-      _this.trigger('retryStop');
+      _this.trigger('pollingStop');
     });
-  },
-
-  retryFailedPayment: function(id) {
-    if (id !== this.get('id')) {
-      return false;
-    }
-
-    this.save(null, {
-      type: 'post',
-      url: session.get('gatewaydUrl') + '/v1/payments/failed/' + this.get('id') + '/retry',
-      contentType: 'application/json',
-      headers: {
-        Authorization: session.get('credentials')
-      },
-      success: this.pollStatus
-    });
-  },
+  }
 });
 
 //add validation mixin

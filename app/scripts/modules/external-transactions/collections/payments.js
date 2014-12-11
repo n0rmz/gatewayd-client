@@ -29,7 +29,7 @@ var Payments = Backbone.Collection.extend({
 
     handleAction[paymentConfigActions.updateUrl] = this.updateUrl;
     handleAction[paymentConfigActions.flagAsDone] = this.flagAsDone;
-    handleAction[paymentConfigActions.fetchRippleTransactions] = this.fetchRippleTransactions;
+    handleAction[paymentConfigActions.fetchExternalTransactions] = this.fetchExternalTransactions;
     handleAction[paymentConfigActions.sendPaymentComplete] = this.sendPaymentComplete;
 
     if (!_.isUndefined(this[payload.actionType])) {
@@ -39,31 +39,19 @@ var Payments = Backbone.Collection.extend({
 
   urlObject: {
     "payments": {
-      "path":"/v1/ripple_transactions",
+      "path":"/v1/external_transactions",
       "method": "get"
     },
-    "incoming": {
-      "path":"/v1/ripple_transactions",
+    "deposits": {
+      "path":"/v1/external_transactions",
       "method": "get"
     },
-    "succeded": {
-      "path":"/v1/ripple_transactions",
-      "method": "get"
-    },
-    "failed": {
-      "path":"/v1/ripple_transactions",
-      "method": "get"
-    },
-    "outgoing": {
-      "path":"/v1/ripple_transactions",
-      "method": "get"
-    },
-    "new": {
-      "path":"/v1/ripple_transactions",
+    "withdrawals": {
+      "path":"/v1/external_transactions",
       "method": "get"
     },
     "flagAsDone": {
-      "path":"/v1/ripple_transactions/",
+      "path":"/v1/external_transactions/",
       "method": "save"
     }
   },
@@ -78,17 +66,17 @@ var Payments = Backbone.Collection.extend({
     this.url = session.get('gatewaydUrl') + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
-    this.fetchRippleTransactions();
+    this.fetchExternalTransactions();
   },
 
   flagAsDone: function(id) {
     var model = this.get(id);
 
     model.set({
-      state: 'succeeded'
+      state: 'cleared'
     });
 
-    model.save('state', 'succeeded', {
+    model.save('status', 'cleared', {
       url: session.get('gatewaydUrl') + this.urlObject.flagAsDone.path + id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));
@@ -96,7 +84,7 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
-  fetchRippleTransactions: function() {
+  fetchExternalTransactions: function() {
     var _this = this;
 
     // array of current transaction ids
@@ -143,7 +131,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   parse: function(data) {
-    return data.ripple_transactions;
+    return data.external_transactions;
   },
 
   sendPaymentComplete: function(paymentData) {
