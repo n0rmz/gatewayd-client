@@ -18,14 +18,14 @@ var SessionComponent = require('../modules/session/components/session.jsx');
 var LoginForm = require('../modules/session/components/login-form.jsx');
 
 // continuously fetch ripple transactions when tab is active
-var Payments = require('../modules/payments/components/payments.jsx');
-var paymentActions = require('../modules/payments/actions.js');
+var ExternalTransactions = require('../modules/external-transactions/components/payments.jsx');
+var paymentActions = require('../modules/external-transactions/actions.js');
 var heartbeats = require('heartbeats');
 var pollingHeart = new heartbeats.Heart(1000);
 
 var pollWhenActive = function() {
   if (sessionModel.isLoggedIn()) {
-    paymentActions.fetchRippleTransactions();
+    paymentActions.fetchExternalTransactions();
   }
 };
 
@@ -48,7 +48,7 @@ var routes = (
     <DefaultRoute handler={SessionComponent} />
     <Route name="login" handler={SessionComponent} />
     <Route name="logout" handler={SessionComponent} />
-    <Route name="payments" path="payments/:direction/:state" handler={Payments}/>
+    <Route name="payments" path="payments/:paymentType/:state" handler={ExternalTransactions}/>
     <Route name="notFound" handler={NotFound} />
     <NotFoundRoute handler={NotFound} />
     <Redirect from="/" to="/login" />

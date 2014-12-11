@@ -12,12 +12,12 @@ var NavSecondary = React.createClass({
   getDefaultProps: function() {
     return {
       links: [{
-        text: 'Received',
-        href: '/payments/incoming'
+        text: 'Withdrawals',
+        href: '/payments/withdrawals/queued'
       },
       {
-        text: 'Sent',
-        href: '/payments/outgoing'
+        text: 'Deposits',
+        href: '/payments/deposits/queued'
       }],
       wrapperClassName: 'foo',
       navLinksClassName: 'nav-secondary'
