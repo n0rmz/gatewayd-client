@@ -16,6 +16,7 @@ var NotFound = require('./not-found/not-found.jsx');
 var sessionModel = require('../modules/session/models/session');
 var SessionComponent = require('../modules/session/components/session.jsx');
 var LoginForm = require('../modules/session/components/login-form.jsx');
+var ExternalAccounts = require('../modules/external-accounts/components/accounts.jsx');
 
 // continuously fetch ripple transactions when tab is active
 var ExternalTransactions = require('../modules/external-transactions/components/payments.jsx');
@@ -48,7 +49,8 @@ var routes = (
     <DefaultRoute handler={SessionComponent} />
     <Route name="login" handler={SessionComponent} />
     <Route name="logout" handler={SessionComponent} />
-    <Route name="payments" path="payments/:paymentType/:state" handler={ExternalTransactions}/>
+    <Route name="payments" path="payments/:paymentType/:state" handler={ExternalTransactions} />
+    <Route name="accounts" path="accounts/:accountType" handler={ExternalAccounts} />
     <Route name="notFound" handler={NotFound} />
     <NotFoundRoute handler={NotFound} />
     <Redirect from="/" to="/login" />
