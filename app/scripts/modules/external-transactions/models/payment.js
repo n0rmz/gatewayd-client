@@ -18,8 +18,14 @@ Backbone.$ = $;
 var Payment = Backbone.Model.extend({
   defaults: {
     id: 0,
-    amount: 0.0,
-    currency: '',
+    // amount: 0.0,
+    // currency: '',
+    source_account_id: 0,
+    source_amount: 0.0,
+    source_currency: '',
+    destination_account_id: 0,
+    destination_amount: 0.0,
+    destination_currency: '',
     deposit: true,
     external_account_id: 0,
     status: '',
@@ -27,15 +33,26 @@ var Payment = Backbone.Model.extend({
     uid: '',
     data: '',
     invoice_id: '',
-    to_account_id: 0
-    // from_account_id: 0 // this doesn't work
+    memos: ''
   },
 
   validationRules: {
-    amount: {
+    source_account_id: {
       validators: ['isRequired', 'isNumber']
     },
-    currency: {
+    source_amount: {
+      validators: ['isRequired', 'isNumber']
+    },
+    source_currency: {
+      validators: ['isRequired', 'isString', 'minLength:1']
+    },
+    destination_account_id: {
+      validators: ['isRequired', 'isNumber']
+    },
+    destination_amount: {
+      validators: ['isRequired', 'isNumber']
+    },
+    destination_currency: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
     deposit: {
@@ -43,6 +60,21 @@ var Payment = Backbone.Model.extend({
     },
     external_account_id: {
       validators: ['isRequired', 'isNumber']
+    },
+    ripple_transaction_id: {
+      validators: ['isNumber']
+    },
+    uid: {
+      validators: ['isString', 'minLength:1']
+    },
+    data: {
+      validators: ['isString', 'minLength:1']
+    },
+    invoice_id: {
+      validators: ['isString', 'minLength:1']
+    },
+    memos: {
+      validators: ['isString', 'minLength:1']
     }
   },
 

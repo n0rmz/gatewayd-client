@@ -1,0 +1,8 @@
+{
+  "actions": {
+    "updateUrl": "updateUrl",
+    "sendPaymentAttempt": "sendPaymentAttempt",
+    "createAccountComplete": "createAccountComplete",
+    "fetchExternalAccounts": "fetchExternalAccounts"
+  }
+}

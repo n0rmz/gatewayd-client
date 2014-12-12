@@ -4,13 +4,13 @@ var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var paymentConfigActions = require('../config.json').actions;
+var accountConfigActions = require('../config.json').actions;
 var session = require('../../../modules/session/models/session');
-var Model = require('../models/payment.js');
+var Model = require('../models/account.js');
 
 Backbone.$ = $;
 
-var Payments = Backbone.Collection.extend({
+var Accounts = Backbone.Collection.extend({
 
   model: Model,
 
@@ -27,10 +27,9 @@ var Payments = Backbone.Collection.extend({
   dispatcherCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[paymentConfigActions.updateUrl] = this.updateUrl;
-    handleAction[paymentConfigActions.flagAsDone] = this.flagAsDone;
-    handleAction[paymentConfigActions.fetchExternalTransactions] = this.fetchExternalTransactions;
-    handleAction[paymentConfigActions.sendPaymentComplete] = this.sendPaymentComplete;
+    handleAction[accountConfigActions.updateUrl] = this.updateUrl;
+    handleAction[accountConfigActions.fetchExternalAccounts] = this.fetchExternalAccounts;
+    handleAction[accountConfigActions.createAccountComplete] = this.createAccountComplete;
 
     if (!_.isUndefined(this[payload.actionType])) {
       this[payload.actionType](payload.data);
@@ -38,13 +37,9 @@ var Payments = Backbone.Collection.extend({
   },
 
   urlObject: {
-    "payments": {
-      "path":"/v1/external_transactions",
+    "accounts": {
+      "path":"/v1/external_accounts",
       "method": "get"
-    },
-    "flagAsDone": {
-      "path":"/v1/external_transactions/",
-      "method": "save"
     }
   },
 
@@ -58,33 +53,14 @@ var Payments = Backbone.Collection.extend({
     this.url = session.get('gatewaydUrl') + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
-    this.fetchExternalTransactions();
+    this.fetchExternalAccounts();
   },
 
-  flagAsDone: function(id) {
-    var model = this.get(id);
-
-    model.set({
-      status: 'cleared'
-    });
-
-    model.save('status', 'cleared', {
-      url: session.get('gatewaydUrl') + this.urlObject.flagAsDone.path + id,
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader('Authorization', session.get('credentials'));
-      }
-    });
-  },
-
-  fetchExternalTransactions: function() {
+  fetchExternalAccounts: function() {
     var _this = this;
 
-    // array of current transaction ids
+    // array of current account ids
     var ids = _.pluck(this.models, 'id');
-
-    if (_.isUndefined(this.url)) {
-      this.url = session.get('gatewaydUrl') + this.urlObject.payments.path;
-    }
 
     this.fetch({
       headers: {
@@ -95,7 +71,7 @@ var Payments = Backbone.Collection.extend({
         // TODO - is there a faster way to do this without multiple collection iterations?
         var newIds, diffIds;
 
-        // 'new' attribute is reset for all existing payment models
+        // 'new' attribute is reset for all existing account models
         if (!ids.length) {
           _.each(_this.models, function(model) {
             model.set('new', false);
@@ -104,17 +80,17 @@ var Payments = Backbone.Collection.extend({
           return true;
         }
 
-        // array of current payment ids after fetch
+        // array of current account ids after fetch
         newIds = _.pluck(_this.models, 'id');
 
-        // array of payment ids existing only in newIds
+        // array of account ids existing only in newIds
         diffIds = _.reject(newIds, function(id) {
           return ids.indexOf(id) > -1;
         });
 
         _.each(_this.models, function(model) {
 
-          // payments whose model Ids are in diffIds get a 'new' attribute
+          // accounts whose model Ids are in diffIds get a 'new' attribute
           // 'new' models will be highlighted
           if (diffIds.indexOf(model.get('id')) > -1) {
             model.set('new', true);
@@ -127,23 +103,16 @@ var Payments = Backbone.Collection.extend({
   },
 
   parse: function(data) {
-    return data.external_transactions;
+    return data.external_accounts;
   },
 
-  sendPaymentComplete: function(paymentData) {
-    var _this = this;
-
+  createAccountComplete: function(accountData) {
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
-      },
-      success: function() {
-
-        // poll status of sent payment until failed/succeeded to see changes
-        _this.get(paymentData.id).pollStatus();
       }
     });
   }
 });
 
-module.exports = Payments;
+module.exports = Accounts;

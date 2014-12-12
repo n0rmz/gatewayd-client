@@ -9,10 +9,6 @@ var PaymentDetailContent = React.createClass({
     paymentDetailClassName: React.PropTypes.string
   },
 
-
-    to_account_id: 0,
-    from_account_id: 0,
-
   render: function() {
     return (
       <div className={this.props.paymentDetailClassName}>
@@ -30,19 +26,25 @@ var PaymentDetailContent = React.createClass({
         <br />
         <div className="row">
           <div className="col-sm-4 col-xs-12">
-            From Account Id: {this.props.model.get('from_account_id')}
+            Source Account Id: {this.props.model.get('source_account_id')}
           </div>
           <div className="col-sm-4 col-xs-12">
-            Amount: {this.props.model.get('amount')}
+            Amount: {this.props.model.get('source_amount')}
           </div>
           <div className="col-sm-4 col-xs-12">
-            Currency: {this.props.model.get('currency')}
+            Currency: {this.props.model.get('source_currency')}
           </div>
         </div>
         <br />
         <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            To Account Id: {this.props.model.get('to_account_id')}
+          <div className="col-sm-4 col-xs-12">
+            Destination Account Id: {this.props.model.get('destination_account_id')}
+          </div>
+          <div className="col-sm-4 col-xs-12">
+            Amount: {this.props.model.get('destination_amount')}
+          </div>
+          <div className="col-sm-4 col-xs-12">
+            Currency: {this.props.model.get('destination_currency')}
           </div>
         </div>
         <br />
@@ -61,6 +63,10 @@ var PaymentDetailContent = React.createClass({
         <br />
         <div className="row">
           Data: {this.props.model.get('data') || 'none'}
+        </div>
+        <br />
+        <div className="row">
+          Memos: {this.props.model.get('memos') || 'none'}
         </div>
       </div>
     );

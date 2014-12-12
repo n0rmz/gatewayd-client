@@ -1,17 +1,20 @@
 var data = {
   bob: {
     id: 1,
-    amount: 9999.99,
-    currency: 'USD',
+    source_account_id: 2,
+    source_amount: 500,
+    source_currency: 'USD',
+    destination_account_id: 77,
+    destination_amount: 999,
+    destination_currency: 'XRP',
     deposit: true,
-    external_account_id: 1,
+    external_account_id: 335,
     status: 'cleared',
-    ripple_transaction_id: 1,
+    ripple_transaction_id: 90,
     uid: '?',
     data: '?',
-    invoice_id: '?',
-    to_account_id: 1,
-    from_account_id: 1
+    invoice_id: 'SHA-256',
+    memos: '?'
   }
 };
 
