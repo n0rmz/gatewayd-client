@@ -73,7 +73,7 @@ var Payments = Backbone.Collection.extend({
     var model = this.get(id);
 
     model.set({
-      state: 'cleared'
+      status: 'cleared'
     });
 
     model.save('status', 'cleared', {

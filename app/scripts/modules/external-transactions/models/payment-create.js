@@ -12,13 +12,20 @@ Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
   defaults: {
-    address: '',
-    amount: 0,
+    // Not yet implemented:
+    // source_amount: 0.0,
+    // source_currency: '',
+    // destination_amount: 0.0,
+    // destination_currency: '',
+    // memo: '', // different from data?
+    amount: 0.0,
     currency: '',
-    destinationTag: 0,
-    sourceTag: 0,
-    invoiceId: '',
-    memo: ''
+    deposit: true, // always true
+    external_account_id: 0,
+    data: '',
+    invoice_id: '',
+    to_account_id: 0,
+    from_account_id: 0
   },
 
   validationRules: {

@@ -27,8 +27,8 @@ var Payment = Backbone.Model.extend({
     uid: '',
     data: '',
     invoice_id: '',
-    to_account_id: 0,
-    from_account_id: 0
+    to_account_id: 0
+    // from_account_id: 0 // this doesn't work
   },
 
   validationRules: {

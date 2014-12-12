@@ -43,7 +43,7 @@ var TopBar = React.createClass({
     return (
       <div className={this.props.wrapperClassName}>
         <a href="#" onClick={this.handleExpand} className="button-sidebar">
-          <span className="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+          <span className="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
         </a>
         <Branding
           brandName={this.props.brandName}
