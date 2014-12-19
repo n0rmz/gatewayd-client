@@ -20,7 +20,7 @@ var Wallets = require('../modules/wallets/components/wallets.jsx');
 require('react-bootstrap');
 
 var topBarConfig = {
-  brandName: 'Gatewayd Basic',
+  brandName: 'Gatewayd Banking App',
   wrapperClassName: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
   links: []
 };

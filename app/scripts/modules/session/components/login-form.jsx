@@ -77,6 +77,7 @@ var LoginForm = React.createClass({
   render: function() {
     return (
       <form role="form" className="col-xs-6 col-xs-offset-3" onSubmit={this.handleSubmit}>
+        <h2>Sign In</h2>
         <Input type="text" label="Host url:"
           ref="gatewaydUrl" value={this.state.baseUrl}
           onChange={this.handleGatewayUrlChange}
