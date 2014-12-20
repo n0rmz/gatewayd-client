@@ -8,7 +8,7 @@ var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var paymentActions = require('../actions');
+var moduleActions = require('../actions');
 
 var PaymentCreate = React.createClass({
   validationMap: {
@@ -17,12 +17,12 @@ var PaymentCreate = React.createClass({
   },
 
   refNameTypeMap: {
-    address: 'string',
-    unprocessed_address: 'string',
-    amount: 'number',
-    currency: 'string',
-    destination_tag: 'number',
-    source_tag: 'number',
+    source_account_id: 'number',
+    source_amount: 'number',
+    source_currency: 'string',
+    destination_account_id: 'number',
+    destination_amount: 'number',
+    destination_currency: 'string',
     invoice_id: 'string',
     memos: 'string'
   },
@@ -41,7 +41,7 @@ var PaymentCreate = React.createClass({
     return type === 'number' ? formattedInput * 1 : formattedInput;
   },
 
-  buildPayment: function(refKeys) {
+  buildFormObject: function(refKeys) {
     var _this = this;
 
     return _.mapValues(refKeys, function(value, key) {
@@ -52,14 +52,14 @@ var PaymentCreate = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
 
-    var payment = this.buildPayment(this.refs);
+    var payment = this.buildFormObject(this.refs);
 
     this.setState({
       disableForm: true,
       submitButtonLabel: 'Sending Payment...',
     });
 
-    paymentActions.sendPaymentAttempt(payment);
+    moduleActions.sendPaymentAttempt(payment);
   },
 
   handleSubmissionError: function() {
@@ -103,13 +103,6 @@ var PaymentCreate = React.createClass({
     } else {
       this.setErrorMessage(fieldName, errorMessage);
     }
-
-    if (fieldName === 'unprocessed_address') {
-      this.setState({
-        disableAddressField: false,
-        disableSubmitButton: false
-      });
-    }
   },
 
   validateField: function(fieldName) {
@@ -121,37 +114,14 @@ var PaymentCreate = React.createClass({
     this.setState(clearFieldValidation);
 
     if (fieldValue !== null) {
-      paymentActions.validateField(fieldName, fieldValue);
+      moduleActions.validateField(fieldName, fieldValue);
     }
-  },
-
-  validateAddress: function() {
-    var addressFieldValue = this.formatInput(this.refs.unprocessed_address, this.refNameTypeMap.unprocessed_address);
-
-    this.setState({
-      unprocessed_address: {}
-    });
-
-    if (addressFieldValue !== null) {
-      this.setState({
-        disableAddressField: true,
-        disableSubmitButton: true
-      });
-
-      paymentActions.validateAddress(addressFieldValue);
-    }
-  },
-
-  handleAddressProcessed: function(newAddressValue) {
-    this.setState({
-      addressValue: newAddressValue
-    });
   },
 
   dispatchSendPaymentComplete: function(model, data) {
     this.hideForm();
 
-    paymentActions.sendPaymentComplete(data.payment);
+    moduleActions.sendPaymentComplete(data.externalTransaction);
   },
 
   hideForm: function() {
@@ -160,16 +130,16 @@ var PaymentCreate = React.createClass({
 
   getInitialState: function() {
     return {
-      addressValue: '',
-      unprocessed_address: {},
-      amount: {},
-      currency: {},
-      destination_tag: {},
-      source_tag: {},
+      source_account_id: {},
+      source_amount: {},
+      source_currency: {},
+      destination_account_id: {},
+      destination_amount: {},
+      destination_currency: {},
       invoice_id: {},
       memos: {},
       disableForm: false,
-      submitButtonLabel: 'Submit Payment',
+      submitButtonLabel: 'Send Payment',
     };
   },
 
@@ -178,92 +148,129 @@ var PaymentCreate = React.createClass({
     this.props.model.on('validationComplete', this.handleValidationResult);
     this.props.model.on('sync', this.dispatchSendPaymentComplete);
     this.props.model.on('error', this.handleSubmissionError);
-    this.props.model.on('addressProcessed', this.handleAddressProcessed);
 
-    paymentActions.reset();
+    moduleActions.reset();
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('invalid validationComplete sync error addressProcessed');
+    this.props.model.off('invalid validationComplete sync error');
   },
 
   render: function() {
-    var requiredLabel = (
-      <Label bsStyle="info">Required</Label>
-    );
+    var requiredLabel = function(labelName) {
+      return (
+        <div>
+          <Label bsStyle="info">Required</Label> {labelName}
+        </div>
+      );
+    };
+
+    var errorMessageLabel = function(errorMessage) {
+      return (
+        <Label bsStyle="warning">{errorMessage}</Label>
+      );
+    };
 
     return (
       <Modal
-        title="Send Payment"
+        title="Add a Deposit"
         backdrop={true}
         onRequestHide={this.hideForm}
         animation={false}
       >
         <div className="modal-body">
           <form onSubmit={this.handleSubmit}>
-            <Input type="text" ref="unprocessed_address"
-              label={<div>{requiredLabel} Destination Address: </div>}
-              bsStyle={this.validationMap[this.state.unprocessed_address.isValid]}
-              disabled={this.state.disableForm || this.state.disableAddressField}
-              autoFocus={true} onBlur={this.validateAddress.bind(this, false)}
-              hasFeedback
-            />
-            <Label bsStyle="warning">{this.state.unprocessed_address.errorMessage}</Label>
-            <Input type="hidden" ref="address" value={this.state.addressValue} />
             <Row>
-              <Col xs={6}>
-                <Input type="tel" ref="amount"
-                  label={<div>{requiredLabel} Amount: </div>}
-                  bsStyle={this.validationMap[this.state.amount.isValid]}
-                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'amount')}
+              <Col xs={4}>
+                <Input type="text" ref="source_account_id"
+                  label="Source Id:"
+                  bsStyle={this.validationMap[this.state.source_account_id.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'source_account_id')}
                   hasFeedback
+                  autofocus={true}
                 />
-                <Label bsStyle="warning">{this.state.amount.errorMessage}</Label>
+                {errorMessageLabel(this.state.source_account_id.errorMessage)}
               </Col>
-              <Col xs={6}>
-                <Input type="text" ref="currency"
-                  label={<div>{requiredLabel} Currency: </div>}
-                  bsStyle={this.validationMap[this.state.currency.isValid]}
-                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'currency')}
+              <Col xs={4}>
+                <Input type="text" ref="source_amount"
+                  label="Amount:"
+                  bsStyle={this.validationMap[this.state.source_amount.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'source_amount')}
                   hasFeedback
+                  autofocus={true}
                 />
-                <Label bsStyle="warning">{this.state.currency.errorMessage}</Label>
+                {errorMessageLabel(this.state.source_amount.errorMessage)}
+              </Col>
+              <Col xs={4}>
+                <Input type="text" ref="source_currency"
+                  label="Currency:"
+                  bsStyle={this.validationMap[this.state.source_currency.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'source_currency')}
+                  hasFeedback
+                  autofocus={true}
+                />
+                {errorMessageLabel(this.state.source_currency.errorMessage)}
               </Col>
             </Row>
             <Row>
-              <Col xs={6}>
-                <Input type="tel" ref="destination_tag"
-                  label="Destination Tag:"
-                  bsStyle={this.validationMap[this.state.destination_tag.isValid]}
-                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'destination_tag')}
+              <Col xs={4}>
+                <Input type="text" ref="destination_account_id"
+                  label="Destination Id:"
+                  bsStyle={this.validationMap[this.state.destination_account_id.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'destination_account_id')}
                   hasFeedback
+                  autofocus={true}
                 />
-                <Label bsStyle="warning">{this.state.destination_tag.errorMessage}</Label>
+                {errorMessageLabel(this.state.destination_account_id.errorMessage)}
               </Col>
-              <Col xs={6}>
-                <Input type="tel" ref="source_tag"
-                  label="Source Tag:"
-                  bsStyle={this.validationMap[this.state.source_tag.isValid]}
-                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'source_tag')}
+              <Col xs={4}>
+                <Input type="text" ref="destination_amount"
+                  label="Amount:"
+                  bsStyle={this.validationMap[this.state.destination_amount.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'destination_amount')}
                   hasFeedback
+                  autofocus={true}
                 />
-                <Label bsStyle="warning">{this.state.source_tag.errorMessage}</Label>
+                {errorMessageLabel(this.state.destination_amount.errorMessage)}
+              </Col>
+              <Col xs={4}>
+                <Input type="text" ref="destination_currency"
+                  label="Currency:"
+                  bsStyle={this.validationMap[this.state.destination_currency.isValid]}
+                  disabled={this.state.disableForm}
+                  onBlur={this.validateField.bind(this, 'destination_currency')}
+                  hasFeedback
+                  autofocus={true}
+                />
+                {errorMessageLabel(this.state.destination_currency.errorMessage)}
               </Col>
             </Row>
+
             <Input type="text" ref="invoice_id"
-              label="Invoice Id (SHA256):"
+              label="Invoice Id:"
               bsStyle={this.validationMap[this.state.invoice_id.isValid]}
-              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'invoice_id')}
+              disabled={this.state.disableForm}
+              onBlur={this.validateField.bind(this, 'invoice_id')}
               hasFeedback
+              autofocus={true}
             />
-            <Label bsStyle="warning">{this.state.invoice_id.errorMessage}</Label>
-            <Input type="textarea" ref="memos"
+            {errorMessageLabel(this.state.invoice_id.errorMessage)}
+
+            <Input type="text" ref="memos"
               label="Memos:"
               bsStyle={this.validationMap[this.state.memos.isValid]}
-              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'memos')}
+              disabled={this.state.disableForm}
+              onBlur={this.validateField.bind(this, 'memos')}
               hasFeedback
+              autofocus={true}
             />
-            <Label bsStyle="warning">{this.state.memos.errorMessage}</Label>
+            {errorMessageLabel(this.state.memos.errorMessage)}
+
             <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
               disabled={this.state.disableForm || this.state.disableSubmitButton}
               block>

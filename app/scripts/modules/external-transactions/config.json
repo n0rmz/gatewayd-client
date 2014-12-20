@@ -4,7 +4,6 @@
     "flagAsDone": "flagAsDone",
     "reset": "reset",
     "validateField": "validateField",
-    "validateAddress": "validateAddress",
     "sendPaymentAttempt": "sendPaymentAttempt",
     "sendPaymentComplete": "sendPaymentComplete",
     "fetchExternalTransactions": "fetchExternalTransactions"

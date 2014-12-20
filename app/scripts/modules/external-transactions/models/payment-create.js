@@ -13,38 +13,55 @@ Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
   defaults: {
-    // Not yet implemented:
-    // source_amount: 0.0,
-    // source_currency: '',
-    // destination_amount: 0.0,
-    // destination_currency: '',
-    // memo: '', // different from data?
-    amount: 0.0,
-    currency: '',
-    destination_tag: 0,
-    source_tag: 0,
+    source_account_id: 0,
+    source_amount: 0.0,
+    source_currency: '',
+    destination_account_id: 0,
+    destination_amount: 0.0,
+    destination_currency: '',
+    deposit: true, // always true
+    external_account_id: 1, // why is this required?
+    // status: '',
+    // ripple_transaction_id: 0,
+    // uid: '',
+    // data: '',
     invoice_id: '',
     memos: ''
   },
 
   validationRules: {
-    address: {
+    source_account_id: {
+      validators: ['isRequired', 'isNumber']
+    },
+    source_amount: {
+      validators: ['isRequired', 'isNumber']
+    },
+    source_currency: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
-    unprocessed_address: {
+    destination_account_id: {
+      validators: ['isRequired', 'isNumber']
+    },
+    destination_amount: {
+      validators: ['isRequired', 'isNumber']
+    },
+    destination_currency: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
-    amount: {
-      validators: ['isRequired', 'isNumber'] // decimal
+    deposit: {
+      validators: ['isRequired', 'isBoolean']
     },
-    currency: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+    external_account_id: {
+      validators: ['isRequired', 'isNumber']
     },
-    destination_tag: {
+    ripple_transaction_id: {
       validators: ['isNumber']
     },
-    source_tag: {
-      validators: ['isNumber']
+    uid: {
+      validators: ['isString', 'minLength:1']
+    },
+    data: {
+      validators: ['isString', 'minLength:1']
     },
     invoice_id: {
       validators: ['isString', 'minLength:1']
@@ -66,7 +83,6 @@ var Payment = Backbone.Model.extend({
     handleAction[paymentConfigActions.reset] = this.reset;
     handleAction[paymentConfigActions.sendPaymentAttempt] = this.sendPaymentAttempt;
     handleAction[paymentConfigActions.validateField] = this.validateField;
-    handleAction[paymentConfigActions.validateAddress] = this.validateAddress;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -77,9 +93,9 @@ var Payment = Backbone.Model.extend({
     this.clear().set(this.defaults);
   },
 
-  postPayment: function() {
+  sendPayment: function() {
     this.save(null, {
-      url: session.get('gatewaydUrl') + '/v1/payments/outgoing',
+      url: session.get('gatewaydUrl') + '/v1/external_transactions',
       contentType: 'application/json',
       headers: {
         Authorization: session.get('credentials')
@@ -89,9 +105,6 @@ var Payment = Backbone.Model.extend({
 
   validateField: function(data) {
     var attributeValidation = this.attributeIsValid(data.fieldName, data.fieldValue);
-    var updatedField = {};
-
-    updatedField[data.fieldName] = data.fieldValue;
 
     if (attributeValidation.result) {
       this.trigger('validationComplete', true, data.fieldName, '');
@@ -100,32 +113,11 @@ var Payment = Backbone.Model.extend({
     }
   },
 
-  validateAddress: function(address) {
-    var _this = this;
-
-    RippleName.lookup(address)
-    .then(function(data) {
-      if (data.exists) {
-        _this.validateField({
-          fieldName: 'unprocessed_address',
-          fieldValue: data.address
-        });
-
-        _this.trigger('addressProcessed', data.address);
-      } else {
-        _this.trigger('validationComplete', false, 'unprocessed_address', 'ripple name/address does not exist');
-      }
-    })
-    .error(function() {
-      _this.trigger('validationComplete', false, 'unprocessed_address', 'ripple name lookup failed');
-    });
-  },
-
   sendPaymentAttempt: function(payment) {
     this.set(payment);
 
     if (this.isValid()) {
-      this.postPayment();
+      this.sendPayment();
     }
   }
 });

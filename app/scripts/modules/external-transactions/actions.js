@@ -34,13 +34,6 @@ var actions = {
     });
   },
 
-  validateAddress: function(address) {
-    adminDispatcher.handleEvent({
-      actionType: paymentActions.validateAddress,
-      data: address
-    });
-  },
-
   sendPaymentAttempt: function(payment) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.sendPaymentAttempt,
