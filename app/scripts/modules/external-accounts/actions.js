@@ -1,3 +1,5 @@
+"use strict";
+
 var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var accountActions = require('./config.json').actions;
 
@@ -9,17 +11,33 @@ var actions = {
     });
   },
 
-  sendPaymentAttempt: function(payment) {
+  reset: function() {
     adminDispatcher.handleEvent({
-      actionType: accountActions.sendPaymentAttempt,
-      data: payment
+      actionType: accountActions.reset
     });
   },
 
-  createAccountComplete: function(payment) {
+  validateField: function(fieldName, fieldValue) {
+    adminDispatcher.handleEvent({
+      actionType: accountActions.validateField,
+      data: {
+        fieldName: fieldName,
+        fieldValue: fieldValue
+      }
+    });
+  },
+
+  createAccountAttempt: function(account) {
+    adminDispatcher.handleEvent({
+      actionType: accountActions.createAccountAttempt,
+      data: account
+    });
+  },
+
+  createAccountComplete: function(account) {
     adminDispatcher.handleEvent({
       actionType: accountActions.createAccountComplete,
-      data: payment
+      data: account
     });
   },
 

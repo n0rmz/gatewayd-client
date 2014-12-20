@@ -1,7 +1,9 @@
 {
   "actions": {
     "updateUrl": "updateUrl",
-    "sendPaymentAttempt": "sendPaymentAttempt",
+    "reset": "reset",
+    "validateField": "validateField",
+    "createAccountAttempt": "createAccountAttempt",
     "createAccountComplete": "createAccountComplete",
     "fetchExternalAccounts": "fetchExternalAccounts"
   }

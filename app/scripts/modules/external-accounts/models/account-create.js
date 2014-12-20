@@ -4,55 +4,37 @@ var _ = require('lodash');
 var $ = require('jquery');
 var RippleName = require('ripple-name');
 var Backbone = require('backbone');
+var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var paymentConfigActions = require('../config.json').actions;
+var accountConfigActions = require('../config.json').actions;
 var session = require('../../session/models/session');
 
 Backbone.$ = $;
 
-var Payment = Backbone.Model.extend({
+var Account = Backbone.Model.extend({
   defaults: {
+    name: '',
     address: '',
-    amount: 0,
-    currency: '',
-    destinationTag: 0,
-    sourceTag: 0,
-    invoiceId: '',
-    memo: ''
+    uid: '',
+    type: '', // customer/gateway
+    data: ''
   },
 
   validationRules: {
+    name: {
+      validators: ['isString', 'minLength:1']
+    },
     address: {
-      type: 'string',
-      minLength: 1, // some min for ripple address, but none for ripple name
-      isRequired: true
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
-    amount: {
-      type: 'number', // decimal,
-      isRequired: true
+    uid: {
+      validators: ['isString', 'minLength:1']
     },
-    currency: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
+    type: {
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
-    destinationTag: {
-      type: 'number',
-      isRequired: false
-    },
-    sourceTag: {
-      type: 'number',
-      isRequired: false
-    },
-    invoiceId: {
-      type: 'string',
-      minLength: 1,
-      isRequired: false
-    },
-    memo: {
-      type: 'string',
-      minLength: 1,
-      isRequired: false
+    data: {
+      validators: ['isString', 'minLength:1']
     }
   },
 
@@ -65,92 +47,22 @@ var Payment = Backbone.Model.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[paymentConfigActions.sendPaymentAttempt] = this.sendPaymentAttempt;
+    handleAction[accountConfigActions.reset] = this.reset;
+    handleAction[accountConfigActions.createAccountAttempt] = this.createAccountAttempt;
+    handleAction[accountConfigActions.validateField] = this.validateField;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
   },
 
-  validationErrors: [],
-
-  handleObject: function(value, minLength) {
-    if (value === null) {
-      return false;
-    }
-
-    if (Array.isArray(value)) {
-      return value.length >= minLength;
-    }
-
-    return Object.keys(value).length >= minLength;
+  reset: function() {
+    this.clear().set(this.defaults);
   },
 
-  handleString: function(value, minLength) {
-    return !!value && value.length >= minLength;
-  },
-
-  testValid: function(value, attr, rules) {
-    if (value === null && !rules[attr].isRequired) {
-      return true;
-    }
-
-    var testValid = {
-      object: this.handleObject,
-      string: this.handleString,
-    };
-    var isDefined = !_.isUndefined(value);
-    var type = rules[attr].type === 'array' ? 'object' : rules[attr].type;
-    var isValid = typeof value === 'number' ? !isNaN(value) : typeof value === type;
-
-    if (isValid && !_.isUndefined(testValid[typeof value])) {
-      isValid = testValid[typeof value](value, rules[attr].minLength);
-    }
-
-    if (!isDefined) {
-      this.validationErrors.push(attr + ' is undefined');
-    } else if (!isValid) {
-      this.validationErrors.push(attr + ' is invalid');
-    }
-
-    return isDefined && isValid;
-  },
-
-  validate: function(attributes) {
-    var _this = this;
-
-    this.validationErrors = [];
-
-    var isValid = _.reduce(attributes, function(accumulator, value, attr) {
-      if (_.isUndefined(_this.validationRules[attr])) {
-        return accumulator && true;
-      }
-
-      if (_this.testValid(value, attr, _this.validationRules)) {
-        return accumulator && true;
-      } else {
-        return false;
-      }
-    }, true);
-
-    if (!Object.keys(attributes).length) {
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return this.validationErrors.join(', ');
-    }
-  },
-
-  isValid: function() {
-    this.validate(this.attributes);
-
-    return !this.validationError;
-  },
-
-  postPayment: function() {
+  createAccount: function() {
     this.save(null, {
-      url: session.get('gatewaydUrl') + '/v1/payments/outgoing',
+      url: session.get('gatewaydUrl') + '/v1/external_accounts',
       contentType: 'application/json',
       headers: {
         Authorization: session.get('credentials')
@@ -158,53 +70,26 @@ var Payment = Backbone.Model.extend({
     });
   },
 
-  sendPaymentAttempt: function(payment) {
-    this.validateAddress(payment.address);
+  validateField: function(data) {
+    var attributeValidation = this.attributeIsValid(data.fieldName, data.fieldValue);
+
+    if (attributeValidation.result) {
+      this.trigger('validationComplete', true, data.fieldName, '');
+    } else {
+      this.trigger('validationComplete', false, data.fieldName, attributeValidation.errorMessages);
+    }
+  },
+
+  createAccountAttempt: function(account) {
+    this.set(account);
 
     if (this.isValid()) {
-      this.postPayment();
+      this.createAccount();
     }
-  },
-
-  handleFieldValidation: function(validationResult, fieldRef) {
-    if (!_.isUndefined(validationResult)) {
-      this.trigger('validationComplete', false, fieldRef, validationResult);
-    } else {
-      this.trigger('validationComplete', true, fieldRef, '');
-    }
-  },
-
-  validateAddress: function(address) {
-    var _this = this;
-
-    RippleName.lookup(address)
-    .then(function(data) {
-      var addressAttr;
-
-      if (data.exists) {
-        addressAttr = {
-          address: data.address
-        };
-
-        _this.set(addressAttr);
-        _this.handleFieldValidation(_this.validate(addressAttr), 'address');
-      } else {
-        _this.trigger('validationComplete', false, 'address', 'ripple name/address does not exist');
-      }
-    })
-    .error(function() {
-      _this.trigger('validationComplete', false, 'address', 'ripple name lookup failed');
-    });
-  },
-
-  validateField: function(fieldName, fieldValue) {
-    var updatedField = {};
-
-    updatedField[fieldName] = fieldValue;
-    this.set(updatedField);
-
-    this.handleFieldValidation(this.validate(updatedField), fieldName);
   }
 });
 
-module.exports = Payment;
+//add validation mixin
+_.extend(Account.prototype, ValidationMixins);
+
+module.exports = Account;
