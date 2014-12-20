@@ -28,19 +28,19 @@ var Account = Backbone.Model.extend({
 
   validationRules: {
     name: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+      validators: ['isString', 'minLength:1']
     },
     address: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
     uid: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+      validators: ['isString', 'minLength:1']
     },
     type: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
     data: {
-      validators: ['isRequired', 'isString', 'minLength:1']
+      validators: ['isString', 'minLength:1']
     }
   },
 
