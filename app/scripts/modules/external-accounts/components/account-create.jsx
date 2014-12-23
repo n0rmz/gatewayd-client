@@ -8,7 +8,7 @@ var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var moduleActions = require('../actions');
+var accountActions = require('../actions');
 
 var AccountCreate = React.createClass({
   validationMap: {
@@ -56,7 +56,7 @@ var AccountCreate = React.createClass({
       submitButtonLabel: 'Creating Account...',
     });
 
-    moduleActions.createAccountAttempt(account);
+    accountActions.createAccountAttempt(account);
   },
 
   handleSubmissionError: function() {
@@ -70,7 +70,7 @@ var AccountCreate = React.createClass({
     var invalidField = {};
 
     invalidField[fieldName] = {
-      isValid: 'invalid',
+      inputState: 'invalid',
       errorMessage: errorMessage
     };
 
@@ -94,7 +94,7 @@ var AccountCreate = React.createClass({
     if (isValid) {
       var validField = {};
 
-      validField[fieldName] = {isValid: 'valid'};
+      validField[fieldName] = {inputState: 'valid'};
 
       this.setState(validField);
     } else {
@@ -111,14 +111,14 @@ var AccountCreate = React.createClass({
     this.setState(clearFieldValidation);
 
     if (fieldValue !== null) {
-      moduleActions.validateField(fieldName, fieldValue);
+      accountActions.validateField(fieldName, fieldValue);
     }
   },
 
   dispatchCreateAccountComplete: function(model, data) {
     this.hideForm();
 
-    moduleActions.createAccountComplete(data.externalAccount);
+    accountActions.createAccountComplete(data.externalAccount);
   },
 
   hideForm: function() {
@@ -143,7 +143,7 @@ var AccountCreate = React.createClass({
     this.props.model.on('sync', this.dispatchCreateAccountComplete);
     this.props.model.on('error', this.handleSubmissionError);
 
-    moduleActions.reset();
+    accountActions.reset();
   },
 
   componentWillUnmount: function() {
@@ -176,7 +176,7 @@ var AccountCreate = React.createClass({
           <form onSubmit={this.handleSubmit}>
             <Input type="text" ref="name"
               label="Name:"
-              bsStyle={this.validationMap[this.state.name.isValid]}
+              bsStyle={this.validationMap[this.state.name.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'name')}
               hasFeedback
@@ -186,7 +186,7 @@ var AccountCreate = React.createClass({
 
             <Input type="text" ref="address"
               label={requiredLabel("Address: ")}
-              bsStyle={this.validationMap[this.state.address.isValid]}
+              bsStyle={this.validationMap[this.state.address.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'address')}
               hasFeedback
@@ -195,7 +195,7 @@ var AccountCreate = React.createClass({
 
             <Input type="text" ref="uid"
               label="Unique Id:"
-              bsStyle={this.validationMap[this.state.uid.isValid]}
+              bsStyle={this.validationMap[this.state.uid.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'uid')}
               hasFeedback
@@ -204,7 +204,7 @@ var AccountCreate = React.createClass({
 
             <Input type="select" ref="type"
               label={requiredLabel("Type: ")}
-              bsStyle={this.validationMap[this.state.type.isValid]}
+              bsStyle={this.validationMap[this.state.type.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'type')}
               hasFeedback
@@ -217,7 +217,7 @@ var AccountCreate = React.createClass({
 
             <Input type="text" ref="data"
               label="Data:"
-              bsStyle={this.validationMap[this.state.data.isValid]}
+              bsStyle={this.validationMap[this.state.data.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'data')}
               hasFeedback

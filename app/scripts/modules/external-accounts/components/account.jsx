@@ -44,15 +44,10 @@ var Account = React.createClass({
 
   render: function() {
     var _this = this;
-    var paymentItemClasses = '';
-
-    // highlight new transactions
-    if (this.props.model.get('new')) {
-      paymentItemClasses += ' highlight';
-    }
+    var accountItemClasses = '';
 
     return (
-      <li className={"payment-item list-group-item " + paymentItemClasses}>
+      <li className={"payment-item list-group-item " + accountItemClasses}>
         <div className="row">
           <div className="col-sm-3">
             <p>
@@ -96,7 +91,7 @@ var Account = React.createClass({
         </div>
         <div>
           {this.state.showDetails ?
-            <AccountDetailContent model={this.props.model} paymentDetailClassName={"details"}/>
+            <AccountDetailContent model={this.props.model} accountDetailClassName={"details"}/>
             : false}
         </div>
       </li>

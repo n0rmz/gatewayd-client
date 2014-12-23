@@ -31,6 +31,8 @@ var Accounts = React.createClass({
   mixins: [ActiveState, Router.State],
 
   getInitialState: function() {
+
+    // TODO - separate the backbone collection from the state and retrieve only its JSON representation
     return {
       accounts: collection
     };

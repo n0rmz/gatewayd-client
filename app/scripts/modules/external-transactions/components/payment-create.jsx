@@ -8,7 +8,7 @@ var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var moduleActions = require('../actions');
+var paymentActions = require('../actions');
 
 var PaymentCreate = React.createClass({
   validationMap: {
@@ -59,7 +59,7 @@ var PaymentCreate = React.createClass({
       submitButtonLabel: 'Sending Payment...',
     });
 
-    moduleActions.sendPaymentAttempt(payment);
+    paymentActions.sendPaymentAttempt(payment);
   },
 
   handleSubmissionError: function() {
@@ -73,7 +73,7 @@ var PaymentCreate = React.createClass({
     var invalidField = {};
 
     invalidField[fieldName] = {
-      isValid: 'invalid',
+      inputState: 'invalid',
       errorMessage: errorMessage
     };
 
@@ -97,7 +97,7 @@ var PaymentCreate = React.createClass({
     if (isValid) {
       var validField = {};
 
-      validField[fieldName] = {isValid: 'valid'};
+      validField[fieldName] = {inputState: 'valid'};
 
       this.setState(validField);
     } else {
@@ -114,14 +114,14 @@ var PaymentCreate = React.createClass({
     this.setState(clearFieldValidation);
 
     if (fieldValue !== null) {
-      moduleActions.validateField(fieldName, fieldValue);
+      paymentActions.validateField(fieldName, fieldValue);
     }
   },
 
   dispatchSendPaymentComplete: function(model, data) {
     this.hideForm();
 
-    moduleActions.sendPaymentComplete(data.externalTransaction);
+    paymentActions.sendPaymentComplete(data.externalTransaction);
   },
 
   hideForm: function() {
@@ -149,7 +149,7 @@ var PaymentCreate = React.createClass({
     this.props.model.on('sync', this.dispatchSendPaymentComplete);
     this.props.model.on('error', this.handleSubmissionError);
 
-    moduleActions.reset();
+    paymentActions.reset();
   },
 
   componentWillUnmount: function() {
@@ -184,7 +184,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="source_account_id"
                   label="Source Id:"
-                  bsStyle={this.validationMap[this.state.source_account_id.isValid]}
+                  bsStyle={this.validationMap[this.state.source_account_id.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'source_account_id')}
                   hasFeedback
@@ -195,7 +195,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="source_amount"
                   label="Amount:"
-                  bsStyle={this.validationMap[this.state.source_amount.isValid]}
+                  bsStyle={this.validationMap[this.state.source_amount.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'source_amount')}
                   hasFeedback
@@ -206,7 +206,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="source_currency"
                   label="Currency:"
-                  bsStyle={this.validationMap[this.state.source_currency.isValid]}
+                  bsStyle={this.validationMap[this.state.source_currency.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'source_currency')}
                   hasFeedback
@@ -219,7 +219,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="destination_account_id"
                   label="Destination Id:"
-                  bsStyle={this.validationMap[this.state.destination_account_id.isValid]}
+                  bsStyle={this.validationMap[this.state.destination_account_id.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'destination_account_id')}
                   hasFeedback
@@ -230,7 +230,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="destination_amount"
                   label="Amount:"
-                  bsStyle={this.validationMap[this.state.destination_amount.isValid]}
+                  bsStyle={this.validationMap[this.state.destination_amount.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'destination_amount')}
                   hasFeedback
@@ -241,7 +241,7 @@ var PaymentCreate = React.createClass({
               <Col xs={4}>
                 <Input type="text" ref="destination_currency"
                   label="Currency:"
-                  bsStyle={this.validationMap[this.state.destination_currency.isValid]}
+                  bsStyle={this.validationMap[this.state.destination_currency.inputState]}
                   disabled={this.state.disableForm}
                   onBlur={this.validateField.bind(this, 'destination_currency')}
                   hasFeedback
@@ -253,7 +253,7 @@ var PaymentCreate = React.createClass({
 
             <Input type="text" ref="invoice_id"
               label="Invoice Id:"
-              bsStyle={this.validationMap[this.state.invoice_id.isValid]}
+              bsStyle={this.validationMap[this.state.invoice_id.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'invoice_id')}
               hasFeedback
@@ -263,7 +263,7 @@ var PaymentCreate = React.createClass({
 
             <Input type="text" ref="memos"
               label="Memos:"
-              bsStyle={this.validationMap[this.state.memos.isValid]}
+              bsStyle={this.validationMap[this.state.memos.inputState]}
               disabled={this.state.disableForm}
               onBlur={this.validateField.bind(this, 'memos')}
               hasFeedback

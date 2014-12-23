@@ -3,15 +3,15 @@
 var moment = require('moment');
 var React = require('react');
 
-var PaymentDetailContent = React.createClass({
+var AccountDetailContent = React.createClass({
   propTypes: {
     model: React.PropTypes.object,
-    paymentDetailClassName: React.PropTypes.string
+    accountDetailClassName: React.PropTypes.string
   },
 
   render: function() {
     return (
-      <div className={this.props.paymentDetailClassName}>
+      <div className={this.props.accountDetailClassName}>
         <div className="row border-bottom">
           Updated {moment(this.props.model.get('updatedAt')).format('MMM D, YYYY HH:mm z')}
         </div>
@@ -48,4 +48,4 @@ var PaymentDetailContent = React.createClass({
   }
 });
 
-module.exports = PaymentDetailContent;
+module.exports = AccountDetailContent;
