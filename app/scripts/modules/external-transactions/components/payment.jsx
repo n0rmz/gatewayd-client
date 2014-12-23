@@ -51,11 +51,6 @@ var Payment = React.createClass({
     var doneButton, refreshIcon, fromAddress, toAddress;
     var paymentItemClasses = 'modal-container';
 
-    // highlight new transactions
-    if (this.props.model.get('new')) {
-      paymentItemClasses += ' highlight';
-    }
-
     if (!this.props.model.get('deposit') && this.props.model.get('status') === 'queued') {
       doneButton = (
         <ModalTrigger modal={<PaymentDetailModal model={this.props.model} />}>
@@ -69,6 +64,8 @@ var Payment = React.createClass({
     }
 
     return (
+
+
       <li className={"payment-item list-group-item " + paymentItemClasses} ref="container">
         <div className="row">
           <div className="col-xs-3">
