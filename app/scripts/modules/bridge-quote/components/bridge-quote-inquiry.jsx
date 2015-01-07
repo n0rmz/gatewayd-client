@@ -25,7 +25,6 @@ var QuoteInquiryForm = React.createClass({
 
   // used in getInitialState mixin method
   initialState: {
-    disableForm: false,
     submitButtonLabel: 'Get Quotes'
   },
 
@@ -57,12 +56,26 @@ var QuoteInquiryForm = React.createClass({
     this.model.on('change:destination_address', this.updateDestinationAddress);
     this.model.on('change:destination_currency', this.updateDestinationCurrency);
     this.model.on('change:destination_amount', this.updateDestinationAmount);
+    this.model.on('error', this.handleError);
   },
 
   // list of custom event unbindings and actions on unmount
   // used in componentWillUnmount mixin method
   handleAfterUnmount: function() {
+    this.model.off('change error');
     quoteActions.reset();
+  },
+
+  //TODO use this to check if model is valid. Part of todo below
+  handleError: function() {
+  },
+
+  handleSuccess: function() {
+    console.log("success", arguments);
+
+    if (_.isFunction(this.props.onSuccessCb)) {
+      this.props.onSuccessCb({});
+    }
   },
 
   // list of actions to invoke after form input changes
@@ -84,7 +97,6 @@ var QuoteInquiryForm = React.createClass({
   // on model sync error
   handleSubmissionError: function() {
     this.setState({
-      disableForm: false,
       submitButtonLabel: 'Re-Submit Quote Request?',
     });
   },
@@ -98,7 +110,6 @@ var QuoteInquiryForm = React.createClass({
     var quoteQueryParams = this.buildFormObject(this.refs);
 
     this.setState({
-      disableForm: true,
       submitButtonLabel: 'Getting Quotes...',
     });
 
@@ -111,17 +122,18 @@ var QuoteInquiryForm = React.createClass({
   },
 
   render: function() {
+    var isDisabled = (this.props.isDisabled === true) ? true : false;
     var destination_address = this.state.destination_address;
     var destination_currency = this.state.destination_currency;
     var destination_amount = this.state.destination_amount;
     var source_address = this.state.source_address;
 
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} className={'flow-step' + (isDisabled ? ' disabled' : ' active')}>
         <Input type="text" ref={destination_address.refName}
           label="Destination Address:"
           bsStyle={this.validationMap[destination_address.inputState]}
-          disabled={this.state.disableForm}
+          disabled={isDisabled}
           onBlur={this.validateField.bind(this, destination_address.refName)}
           onChange={this.handleChange.bind(this, destination_address.refName)}
           value={destination_address.value}
@@ -132,7 +144,7 @@ var QuoteInquiryForm = React.createClass({
         <Input type="text" ref={destination_amount.refName}
           label="Destination Amount:"
           bsStyle={this.validationMap[destination_amount.inputState]}
-          disabled={this.state.disableForm}
+          disabled={isDisabled}
           onBlur={this.validateField.bind(this, destination_amount.refName)}
           onChange={this.handleChange.bind(this, destination_amount.refName)}
           value={destination_amount.value}
@@ -143,7 +155,7 @@ var QuoteInquiryForm = React.createClass({
         <Input type="tel" ref={destination_currency.refName}
           label="Destination Currency:"
           bsStyle={this.validationMap[destination_currency.inputState]}
-          disabled={this.state.disableForm}
+          disabled={isDisabled}
           onBlur={this.validateField.bind(this, destination_currency.refName)}
           onChange={this.handleChange.bind(this, destination_currency.refName)}
           value={destination_currency.value}
@@ -160,11 +172,10 @@ var QuoteInquiryForm = React.createClass({
         <br />
 
         <Button
-          className="pull-right"
           bsStyle="primary"
           bsSize="large"
           type="submit"
-          disabled={this.state.disableForm || this.state.disableSubmitButton}
+          disabled={isDisabled}
           block
         >
           {this.state.submitButtonLabel}

@@ -62,6 +62,7 @@ var Payment = React.createClass({
           placeholder="Enter a federated address"
         />
         <BridgeQuoteInquiry
+          isDisabled={(this.state.currentStep !== 2) ? true : false}
           federatedAddress={this.state.federatedAddress}
           onSuccessCb={this.completeStep2}
         />
