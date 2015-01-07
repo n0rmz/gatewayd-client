@@ -14,8 +14,7 @@ var Payment = React.createClass({
     return {
       currentStep: 1,
       federatedAddress: '',
-      bridgeQuoteUrl: '',
-
+      bridgeQuoteUrl: ''
     };
   },
 
@@ -60,7 +59,7 @@ var Payment = React.createClass({
           onSuccessCb={this.completeStep1}
           label="Who is the sender?"
           id="ripple-address-lookup"
-          placeholder="Put something here"
+          placeholder="Enter a federated address"
         />
         <BridgeQuoteInquiry
           federatedAddress={this.state.federatedAddress}
