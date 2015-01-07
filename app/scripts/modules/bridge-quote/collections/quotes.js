@@ -64,32 +64,32 @@ var Quotes = Backbone.Collection.extend({
   fetchQuotes: function(quoteQueryParams) {
 
     // DELETE STUB DATA WHEN ENDPOINT IS COMPLETE
-    var stubData = [{
-      direction: 'to-ripple',
-      state    : 'invoice',
-      ripple: {
-        destination_address  : 'r123456789',
-        destination_amount   : 0.0001,
-        destination_currency : 'USD',
-        source_currency      : 'XRP',
-        source_amount        : 0.00000000000003
-      },
-      external: {
-        source_address       : 'acct:rod@bankoftherod.com',
-        destination_address  : 'acct:rod2@bankoftherod.com',
-        destination_currency : 'USD',
-        destination_amount   : 0.0001
-      }
-    }];
+    // var stubData = [{
+    //   direction: 'to-ripple',
+    //   state    : 'invoice',
+    //   ripple: {
+    //     destination_address  : 'r123456789',
+    //     destination_amount   : 0.0001,
+    //     destination_currency : 'USD',
+    //     source_currency      : 'XRP',
+    //     source_amount        : 0.00000000000003
+    //   },
+    //   external: {
+    //     source_address       : 'acct:rod@bankoftherod.com',
+    //     destination_address  : 'acct:rod2@bankoftherod.com',
+    //     destination_currency : 'USD',
+    //     destination_amount   : 0.0001
+    //   }
+    // }];
 
-    this.set(stubData);
+    // this.set(stubData);
 
-    this.trigger('ready', this);
+    // this.trigger('ready', this);
 
     this.updateUrlWithParams(quoteQueryParams);
 
     // TODO - use a real fetch when endpoint is complete
-    // this.fetch({});
+    this.fetch({});
   },
 
   parse: function(data) {
