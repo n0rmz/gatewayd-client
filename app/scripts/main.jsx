@@ -1,10 +1,11 @@
 "use strict";
 
+var path = require('path');
 var React = require('react');
-var Router = require('react-router');
-var routes = require('./components/router.jsx');
+var App = require('./components/app.jsx');
 
-Router.run(routes, function(Handler) {
-  React.render(<Handler/>, document.getElementById('content-main'));
-});
+// needed for dev tools to work
+window.React = React;
+
+React.render(<App/>, document.getElementById('content-main'));
 
