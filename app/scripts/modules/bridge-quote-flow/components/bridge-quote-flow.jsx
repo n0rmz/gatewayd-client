@@ -64,10 +64,10 @@ var Payment = React.createClass({
         <BridgeQuoteInquiry
           isDisabled={(this.state.currentStep !== 2) ? true : false}
           federatedAddress={this.state.federatedAddress}
+          bridgeQuoteUrl={this.state.bridgeQuoteUrl}
           onSuccessCb={this.completeStep2}
         />
         <BridgeQuoteAccept
-          bridgeQuoteUrl={this.state.bridgeQuoteUrl}
           onSuccessCb={this.completeStep3}
         />
       </div>

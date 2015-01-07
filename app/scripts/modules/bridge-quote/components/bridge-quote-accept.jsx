@@ -91,8 +91,6 @@ var QuoteAccept = React.createClass({
 
   componentDidMount: function() {
     collection.on('ready', this.buildQuotes);
-
-    quoteActions.setTemplateUrl(this.props.bridgeQuoteUrl);
   },
 
   componentWillUnmount: function() {

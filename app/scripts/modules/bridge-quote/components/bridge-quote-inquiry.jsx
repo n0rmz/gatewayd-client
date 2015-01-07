@@ -128,6 +128,11 @@ var QuoteInquiryForm = React.createClass({
 
     if (this.model.isValid()) {
       console.log('quoteQueryParams', quoteQueryParams);
+
+      console.log('bridge-quote-accept bridgeQuoteUrl', this.props.bridgeQuoteUrl);
+
+      quoteActions.setTemplateUrl(this.props.bridgeQuoteUrl);
+
       quoteActions.fetchQuotes(quoteQueryParams);
     } else {
       this.handleSubmissionError();

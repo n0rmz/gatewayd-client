@@ -46,6 +46,8 @@ var Quotes = Backbone.Collection.extend({
 
   // update template url with real params
   updateUrlWithParams: function(quoteQueryParams) {
+    console.log('this.url', this.url);
+
     if (_.isUndefined(quoteQueryParams) || _.isEmpty(quoteQueryParams)) {
       return false;
     }
@@ -53,11 +55,20 @@ var Quotes = Backbone.Collection.extend({
     var external = this.get('external');
     var updatedUrl = this.url;
 
-    updatedUrl = updatedUrl.replace(/{sender}/, quoteQueryParams.source_address);
-    updatedUrl = updatedUrl.replace(/{receiver}/, quoteQueryParams.destination_address);
-    updatedUrl = updatedUrl.replace(/{amount}/,
-      quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency);
+    // updatedUrl = updatedUrl.replace(/{sender}/, quoteQueryParams.source_address);
+    // updatedUrl = updatedUrl.replace(/{receiver}/, quoteQueryParams.destination_address);
+    // updatedUrl = updatedUrl.replace(/{amount}/,
+    //   quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency);
 
+    updatedUrl = path.join(
+      updatedUrl,
+      'quotes',
+      'acct:' + quoteQueryParams.source_address,
+      'acct:' + quoteQueryParams.destination_address,
+      quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency
+    );
+
+    console.log('updatedUrl', updatedUrl);
     this.url = updatedUrl;
   },
 
@@ -89,6 +100,7 @@ var Quotes = Backbone.Collection.extend({
     this.updateUrlWithParams(quoteQueryParams);
 
     // TODO - use a real fetch when endpoint is complete
+    console.log(this.url);
     this.fetch({});
   },
 
