@@ -110,7 +110,7 @@ var RippleAddressLookup = React.createClass({
   setMessage: function(message) {
     message = message || 'empty';
 
-    this.setState({message: this.messages[message]});
+    this.setState({message: message});
   },
 
   render: function() {
