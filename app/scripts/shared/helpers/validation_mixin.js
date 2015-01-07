@@ -147,7 +147,7 @@ var validationMixin = {
           message;
 
       //check if it needs to be validated
-      if (_this.validationRules[key]) {
+      if (_this.validationRules && _this.validationRules[key]) {
         message = _this.testValid(val, key, _this.validationRules[key]);
       }
 
