@@ -139,6 +139,7 @@ var RippleAddressLookup = React.createClass({
             buttonAfter={button}
             onChange={this.handleChange}
             bsStyle={this.state.inputState}
+            autoFocus={true}
           />
           {alert}
         </div>

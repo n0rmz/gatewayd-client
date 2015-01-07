@@ -26,10 +26,30 @@ var QuoteAccept = React.createClass({
 
     var quoteToSubmit = _.where(this.state.quotes, {
       cid: cid
-    });
+    })[0];
+
+    var acceptedQuote = (
+      <div>
+        <h4>Quote Submitted</h4>
+        <ul className="list-group">
+          <li className="list-group-item" key={_.uniqueId()}>
+            <div>
+              Amount: {quoteToSubmit.ripple.source_amount}
+              Currency: {quoteToSubmit.ripple.source_currency}
+            </div>
+          </li>
+        </ul>
+      </div>
+    );
 
     console.log('submitting', quoteToSubmit);
 
+    this.setState({
+      quoteAccepted: true,
+      acceptedQuote: acceptedQuote
+    });
+
+    // extract base url from bridge quote url
     var parser = document.createElement('a');
     parser.href = this.props.bridgeQuoteUrl;
 
@@ -63,7 +83,9 @@ var QuoteAccept = React.createClass({
 
   getInitialState: function() {
     return {
-      quotes: {}
+      quotes: {},
+      quoteAccepted: false,
+      acceptedQuote: ''
     };
   },
 
@@ -101,12 +123,18 @@ var QuoteAccept = React.createClass({
       );
     });
 
-    return (
+    var prompt = (
       <div>
         <h4>Please choose a quote to accept:</h4>
         <ul className="list-group">
           {quotes}
         </ul>
+      </div>
+    );
+
+    return (
+      <div>
+        { this.state.quoteAccepted ? this.state.acceptedQuote : prompt }
       </div>
     );
   }

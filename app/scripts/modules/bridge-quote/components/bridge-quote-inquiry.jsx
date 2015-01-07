@@ -125,7 +125,6 @@ var QuoteInquiryForm = React.createClass({
           onBlur={this.validateField.bind(this, destination_address.refName)}
           onChange={this.handleChange.bind(this, destination_address.refName)}
           value={destination_address.value}
-          autoFocus={true}
           hasFeedback
         />
         {this.errorMessageLabel(destination_address.errorMessage)}
