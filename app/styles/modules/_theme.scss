@@ -234,6 +234,25 @@ body {
   }
 }
 
+//form styles
+.input-group + .form-control-feedback {
+  right: 122px;
+}
+
+.flow-step {
+  padding: 10px;
+  margin-bottom: 10px;
+  overflow: auto;
+  background-color: $gray-light;
+  border: 1px solid $gray;
+
+  &.disabled {
+    opacity: 0.7;
+    background-color: $gray;
+  }
+
+}
+
 //borders
 .border-right {
   border-right: 1px solid #efefef;
