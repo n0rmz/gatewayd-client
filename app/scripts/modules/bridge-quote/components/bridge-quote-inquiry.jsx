@@ -28,6 +28,8 @@ var QuoteInquiryForm = React.createClass({
     submitButtonLabel: 'Get Quotes'
   },
 
+  isFirstLoad: true,
+
   updateInputField: function(refName, value) {
     var updatedInput = _.extend(this.state[refName], {
       value: value
@@ -67,17 +69,24 @@ var QuoteInquiryForm = React.createClass({
   },
 
   componentDidUpdate: function() {
+
     if (!this.props.isDisabled) {
-      _.once(this.activateForm);
+      this.activateForm();
+    } else {
+
+      // initialize first load if this module is disabled
+      // just a flag to only autofocus on first load
+      this.isFirstLoad = true;
     }
   },
 
   //todo: this currently focuses. Should it toggle state of entire form?
   activateForm: function() {
+    if (this.isFirstLoad) {
+      this.refs.destination_address.refs.input.getDOMNode().focus();
+    }
 
-    //oh my eeeeyyyyes are bleeding
-    // this.refs.destination_address.getDOMNode().focus();
-    this.refs.destination_address.refs.input.getDOMNode().focus();
+    this.isFirstLoad = false;
   },
 
   //TODO use this to check if model is valid. Part of todo below
@@ -119,6 +128,7 @@ var QuoteInquiryForm = React.createClass({
     e.preventDefault();
 
     // set hidden input field value in model
+    // todo - let's review if we need to use hidden inputs in this context
     quoteActions.updateAttributeData('source_address', this.props.federatedAddress);
 
     var quoteQueryParams = this.buildFormObject(this.refs);
@@ -138,9 +148,6 @@ var QuoteInquiryForm = React.createClass({
 
   render: function() {
     var isDisabled = (this.props.isDisabled === true) ? true : false;
-
-    //todo: refs should not be state imo
-    //state change triggers render. Why do we need to change a ref?
     var destination_address = this.state.destination_address;
     var destination_currency = this.state.destination_currency;
     var destination_amount = this.state.destination_amount;
