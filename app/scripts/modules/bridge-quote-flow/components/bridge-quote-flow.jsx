@@ -2,6 +2,7 @@
 
 var React = require('react');
 var path = require('path');
+var Button = require('react-bootstrap').Button;
 var RippleAddressLookup = require('../../ripple-address-lookup/components/ripple-address-lookup.jsx');
 var BridgeQuoteInquiry = require('../../bridge-quote/components/bridge-quote-inquiry.jsx');
 var BridgeQuoteAccept = require('../../bridge-quote/components/bridge-quote-accept.jsx');
@@ -49,11 +50,17 @@ var Payment = React.createClass({
     this.incrementStep();
   },
 
+  resetForm: function() {
+    location.reload();
+  },
+
   render: function() {
 
     return (
       <div className="">
-        <h3>Get quote to send a payment</h3>
+        <h3>Get quote to send a payment
+          <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>Cancel and Start Over</Button>
+        </h3>
         <RippleAddressLookup
           isDisabled={(this.state.currentStep !== 1) ? true : false}
           onSuccessCb={this.completeStep1}
