@@ -1,5 +1,7 @@
 "use strict";
 
+var secrets = require('../../../../../secrets.json');
+var CryptoJS = require('crypto-js');
 var path = require('path');
 var _ = require('lodash');
 var $ = require('jquery');
@@ -12,6 +14,20 @@ Backbone.$ = $;
 
 var Quotes = Backbone.Collection.extend({
   model: Model,
+
+  getSecret: function(key) {
+    if (secrets[key]) {
+      return secrets[key];
+    }
+
+    return false;
+  },
+
+  createCredentials: function(name, sessionKey) {
+    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
+
+    return 'Basic ' + encodedString;
+  },
 
   comparator: function(a, b) {
     return b.id - a.id; // by cheapest path?
@@ -46,8 +62,6 @@ var Quotes = Backbone.Collection.extend({
 
   // update template url with real params
   updateUrlWithParams: function(quoteQueryParams) {
-    console.log('this.url', this.url);
-
     if (_.isUndefined(quoteQueryParams) || _.isEmpty(quoteQueryParams)) {
       return false;
     }
@@ -68,11 +82,11 @@ var Quotes = Backbone.Collection.extend({
       quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency
     );
 
-    console.log('updatedUrl', updatedUrl);
     this.url = updatedUrl;
   },
 
   fetchQuotes: function(quoteQueryParams) {
+    var credentials = this.createCredentials(this.getSecret('user'), this.getSecret('key'));
 
     // DELETE STUB DATA WHEN ENDPOINT IS COMPLETE
     // var stubData = [{
@@ -100,8 +114,11 @@ var Quotes = Backbone.Collection.extend({
     this.updateUrlWithParams(quoteQueryParams);
 
     // TODO - use a real fetch when endpoint is complete
-    console.log(this.url);
-    this.fetch({});
+    this.fetch({
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader ('Authorization', credentials);
+      }
+    });
   },
 
   parse: function(data) {

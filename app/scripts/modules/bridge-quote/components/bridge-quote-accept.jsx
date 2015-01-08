@@ -1,5 +1,14 @@
 "use strict";
 
+// todo: clean this up and modularize with variable file name/path
+// handle secrets. Make npm module for this in the future
+
+var secrets = require('../../../../../secrets.json');
+
+// getSecret is a method on this component below
+// end secrets
+
+var CryptoJS = require('crypto-js');
 var $ = require('jquery');
 var _ = require('lodash');
 var React = require('react');
@@ -8,9 +17,24 @@ var quoteActions = require('../actions');
 var QuotesCollection = require('../collections/quotes');
 var collection = new QuotesCollection();
 
+
 var QuoteAccept = React.createClass({
   propTypes: {
     model: React.PropTypes.object
+  },
+
+  getSecret: function(key) {
+    if (secrets[key]) {
+      return secrets[key];
+    }
+
+    return false;
+  },
+
+  createCredentials: function(name, sessionKey) {
+    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
+
+    return 'Basic ' + encodedString;
   },
 
   handleSuccess: function() {
@@ -21,44 +45,54 @@ var QuoteAccept = React.createClass({
     console.warn('error', errorMessage);
   },
 
-  submitQuote: function(cid) {
-    console.log(cid, 'was clicked');
+  // extract base url from bridge quote url
+  buildBridgePaymentsUrl: function(bridgeQuoteUrl) {
+    console.log('bridgeQuoteUrl', bridgeQuoteUrl);
+    var parser = document.createElement('a');
 
+    parser.href = bridgeQuoteUrl;
+
+    console.log('parser', parser.protocol + '//' + parser.host + '/v1/bridge_payments');
+
+    return parser.protocol + '//' + parser.host + '/v1/bridge_payments';
+  },
+
+  submitQuote: function(cid) {
     var quoteToSubmit = _.where(this.state.quotes, {
       cid: cid
     })[0];
 
+    var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
+    var credentials = this.createCredentials(this.getSecret('user'), this.getSecret('key'));
+
+    // display this chosen quote
     var acceptedQuote = (
       <div>
         <h4>Quote Submitted</h4>
         <ul className="list-group">
           <li className="list-group-item" key={_.uniqueId()}>
             <div>
-              Amount: {quoteToSubmit.ripple.source_amount}
-              Currency: {quoteToSubmit.ripple.source_currency}
+              Amount: {quoteToSubmit.wallet_payment.primary_amount.amount}
+              Currency: {quoteToSubmit.wallet_payment.primary_amount.currency}
             </div>
           </li>
         </ul>
       </div>
     );
 
-    console.log('submitting', quoteToSubmit);
-
     this.setState({
       quoteAccepted: true,
       acceptedQuote: acceptedQuote
     });
 
-    // extract base url from bridge quote url
-    var parser = document.createElement('a');
-    parser.href = this.props.bridgeQuoteUrl;
-
-    console.log(parser.protocol + '//' + parser.host + '/v1/bridge_payments');
 
     $.ajax({
       type: 'POST',
-      url: parser.protocol + '//' + parser.host + '/v1/bridge_payments',
+      url: bridgePaymentsUrl,
       data: quoteToSubmit,
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader ('Authorization', credentials);
+      },
       done: this.handleSuccess,
       fail: this.handleFail
     });
@@ -69,8 +103,6 @@ var QuoteAccept = React.createClass({
 
     // TODO - is there another way to add an identifier to each quote?
     var quotes = _.map(models, function(quote) {
-      console.log('inside the funky map', quote);
-
       return _.extend(quote.toJSON(), {
         cid: quote.cid
       });
@@ -90,25 +122,24 @@ var QuoteAccept = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('ready', this.buildQuotes);
+    collection.on('sync', this.buildQuotes);
   },
 
   componentWillUnmount: function() {
-    collection.off('ready');
+    collection.off('sync');
   },
 
   render: function() {
     var _this = this;
 
     var quotes = _.map(this.state.quotes, function(quote) {
-      console.log('quote', quote);
-      var quoteData = quote.ripple;
+      var quoteData = quote.wallet_payment.primary_amount;
 
       return (
         <li className="list-group-item" key={_.uniqueId()}>
           <div>
-            Amount: {quoteData.source_amount}
-            Currency: {quoteData.source_currency}
+            Amount: {quoteData.amount}
+            Currency: {quoteData.currency}
             <Button
               className="pull-right"
               bsStyle="info"
