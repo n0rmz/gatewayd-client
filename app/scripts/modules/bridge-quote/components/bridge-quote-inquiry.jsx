@@ -66,6 +66,19 @@ var QuoteInquiryForm = React.createClass({
     quoteActions.reset();
   },
 
+  componentDidUpdate: function() {
+    if (!this.props.isDisabled) {
+      this.activateForm();
+    }
+  },
+
+  //todo: this currently focuses. Should it toggle state of entire form?
+  activateForm: function() {
+
+    //oh my eeeeyyyyes are bleeding
+    this.refs.destination_address.refs.input.getDOMNode().focus();
+  },
+
   //TODO use this to check if model is valid. Part of todo below
   handleError: function() {
   },
@@ -123,6 +136,9 @@ var QuoteInquiryForm = React.createClass({
 
   render: function() {
     var isDisabled = (this.props.isDisabled === true) ? true : false;
+
+    //todo: refs should not be state imo
+    //state change triggers render. Why do we need to change a ref?
     var destination_address = this.state.destination_address;
     var destination_currency = this.state.destination_currency;
     var destination_amount = this.state.destination_amount;
@@ -130,7 +146,9 @@ var QuoteInquiryForm = React.createClass({
 
     return (
       <form onSubmit={this.handleSubmit} className={'flow-step' + (isDisabled ? ' disabled' : ' active')}>
-        <Input type="text" ref={destination_address.refName}
+        <Input
+          type="text"
+          ref={destination_address.refName}
           label="Destination Address:"
           bsStyle={this.validationMap[destination_address.inputState]}
           disabled={isDisabled}
@@ -141,7 +159,9 @@ var QuoteInquiryForm = React.createClass({
         />
         {this.errorMessageLabel(destination_address.errorMessage)}
 
-        <Input type="text" ref={destination_amount.refName}
+        <Input
+          type="text"
+          ref={destination_amount.refName}
           label="Destination Amount:"
           bsStyle={this.validationMap[destination_amount.inputState]}
           disabled={isDisabled}
