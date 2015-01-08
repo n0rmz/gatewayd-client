@@ -1,7 +1,9 @@
 "use strict";
 
-var secrets = require('../../../../../secrets.json');
-var CryptoJS = require('crypto-js');
+// todo: clean this up and modularize with variable file name/path
+// handle secrets. Make npm module for this in the future
+var secrets = require('../../../../../secrets');
+
 var path = require('path');
 var _ = require('lodash');
 var $ = require('jquery');
@@ -21,12 +23,6 @@ var Quotes = Backbone.Collection.extend({
     }
 
     return false;
-  },
-
-  createCredentials: function(name, sessionKey) {
-    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
-
-    return 'Basic ' + encodedString;
   },
 
   comparator: function(a, b) {
@@ -86,34 +82,10 @@ var Quotes = Backbone.Collection.extend({
   },
 
   fetchQuotes: function(quoteQueryParams) {
-    var credentials = this.createCredentials(this.getSecret('user'), this.getSecret('key'));
-
-    // DELETE STUB DATA WHEN ENDPOINT IS COMPLETE
-    // var stubData = [{
-    //   direction: 'to-ripple',
-    //   state    : 'invoice',
-    //   ripple: {
-    //     destination_address  : 'r123456789',
-    //     destination_amount   : 0.0001,
-    //     destination_currency : 'USD',
-    //     source_currency      : 'XRP',
-    //     source_amount        : 0.00000000000003
-    //   },
-    //   external: {
-    //     source_address       : 'acct:rod@bankoftherod.com',
-    //     destination_address  : 'acct:rod2@bankoftherod.com',
-    //     destination_currency : 'USD',
-    //     destination_amount   : 0.0001
-    //   }
-    // }];
-
-    // this.set(stubData);
-
-    // this.trigger('ready', this);
+    var credentials = this.getSecret('credentials');
 
     this.updateUrlWithParams(quoteQueryParams);
 
-    // TODO - use a real fetch when endpoint is complete
     this.fetch({
       beforeSend: function (xhr) {
         xhr.setRequestHeader ('Authorization', credentials);

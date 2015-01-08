@@ -69,6 +69,7 @@ var Payment = React.createClass({
         />
         <BridgeQuoteAccept
           onSuccessCb={this.completeStep3}
+          bridgeQuoteUrl={this.state.bridgeQuoteUrl}
         />
       </div>
     );

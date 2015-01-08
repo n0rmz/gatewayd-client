@@ -68,7 +68,7 @@ var QuoteInquiryForm = React.createClass({
 
   componentDidUpdate: function() {
     if (!this.props.isDisabled) {
-      this.activateForm();
+      _.once(this.activateForm);
     }
   },
 
@@ -76,6 +76,7 @@ var QuoteInquiryForm = React.createClass({
   activateForm: function() {
 
     //oh my eeeeyyyyes are bleeding
+    // this.refs.destination_address.getDOMNode().focus();
     this.refs.destination_address.refs.input.getDOMNode().focus();
   },
 
@@ -149,12 +150,12 @@ var QuoteInquiryForm = React.createClass({
       <form onSubmit={this.handleSubmit} className={'flow-step' + (isDisabled ? ' disabled' : ' active')}>
         <Input
           type="text"
-          ref={destination_address.refName}
+          ref="destination_address"
           label="Destination Address:"
           bsStyle={this.validationMap[destination_address.inputState]}
           disabled={isDisabled}
-          onBlur={this.validateField.bind(this, destination_address.refName)}
-          onChange={this.handleChange.bind(this, destination_address.refName)}
+          onBlur={this.validateField.bind(this, 'destination_address')}
+          onChange={this.handleChange.bind(this, 'destination_address')}
           value={destination_address.value}
           hasFeedback
         />
@@ -162,29 +163,33 @@ var QuoteInquiryForm = React.createClass({
 
         <Input
           type="text"
-          ref={destination_amount.refName}
+          ref="destination_amount"
           label="Destination Amount:"
           bsStyle={this.validationMap[destination_amount.inputState]}
           disabled={isDisabled}
-          onBlur={this.validateField.bind(this, destination_amount.refName)}
-          onChange={this.handleChange.bind(this, destination_amount.refName)}
+          onBlur={this.validateField.bind(this, 'destination_amount')}
+          onChange={this.handleChange.bind(this, 'destination_amount')}
           value={destination_amount.value}
           hasFeedback
         />
         {this.errorMessageLabel(destination_amount.errorMessage)}
 
-        <Input type="tel" ref={destination_currency.refName}
+        <Input
+          type="tel"
+          ref="destination_currency"
           label="Destination Currency:"
           bsStyle={this.validationMap[destination_currency.inputState]}
           disabled={isDisabled}
-          onBlur={this.validateField.bind(this, destination_currency.refName)}
-          onChange={this.handleChange.bind(this, destination_currency.refName)}
+          onBlur={this.validateField.bind(this, 'destination_currency')}
+          onChange={this.handleChange.bind(this, 'destination_currency')}
           value={destination_currency.value}
           hasFeedback
         />
         {this.errorMessageLabel(destination_currency.errorMessage)}
 
-        <Input type="hidden" ref={source_address.refName}
+        <Input
+          type="hidden"
+          ref="source_address"
           value={this.props.federatedAddress}
         />
 

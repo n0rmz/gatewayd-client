@@ -16,7 +16,6 @@ var FormValidationMixin = {
 
     _.each(keys, function(refName) {
       formRefs[refName] = {
-        refName: refName,
         value: _this.model.get(refName) || '',
         inputState: null,
         errorMessage: ''

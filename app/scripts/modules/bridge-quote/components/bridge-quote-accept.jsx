@@ -2,13 +2,8 @@
 
 // todo: clean this up and modularize with variable file name/path
 // handle secrets. Make npm module for this in the future
+var secrets = require('../../../../../secrets');
 
-var secrets = require('../../../../../secrets.json');
-
-// getSecret is a method on this component below
-// end secrets
-
-var CryptoJS = require('crypto-js');
 var $ = require('jquery');
 var _ = require('lodash');
 var React = require('react');
@@ -29,12 +24,6 @@ var QuoteAccept = React.createClass({
     }
 
     return false;
-  },
-
-  createCredentials: function(name, sessionKey) {
-    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
-
-    return 'Basic ' + encodedString;
   },
 
   handleSuccess: function() {
@@ -63,7 +52,7 @@ var QuoteAccept = React.createClass({
     })[0];
 
     var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
-    var credentials = this.createCredentials(this.getSecret('user'), this.getSecret('key'));
+    var credentials = this.getSecret('credentials');
 
     // display this chosen quote
     var acceptedQuote = (
