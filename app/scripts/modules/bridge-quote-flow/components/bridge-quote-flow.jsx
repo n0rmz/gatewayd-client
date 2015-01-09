@@ -60,31 +60,39 @@ var Payment = React.createClass({
         <h3>Get quote to send a payment
           <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>Cancel and Start Over</Button>
         </h3>
-        <RippleAddressLookup
-          isDisabled={(this.state.currentStep !== 1) ? true : false}
-          onSuccessCb={this.completeStep1}
-          label="Who is the sender?"
-          id="ripple-address-lookup"
-          placeholder="Enter a federated address"
-        />
-        <BridgeQuoteInquiry
-          isDisabled={(this.state.currentStep !== 2) ? true : false}
-          onSuccessCb={this.completeStep2}
-          federatedAddress={this.state.federatedAddress}
-          bridgeQuoteUrl={this.state.bridgeQuoteUrl}
-        />
-        <BridgeQuoteAccept
-          isDisabled={(this.state.currentStep !== 3) ? true : false}
-          onSuccessCb={this.completeStep3}
-          bridgeQuoteUrl={this.state.bridgeQuoteUrl}
-          quotes={this.state.quotes}
-        />
-        <BridgeQuoteAcceptedQuote
-          isDisabled={(this.state.currentStep !== 4) ? true: false}
-          amount={this.state.acceptedQuoteAmount}
-          currency={this.state.acceptedQuoteCurrency}
-          destinationAddress={this.state.acceptedQuoteDestinationAddress}
-        />
+        <section className="flow-step">
+          <RippleAddressLookup
+            isDisabled={(this.state.currentStep !== 1) ? true : false}
+            onSuccessCb={this.completeStep1}
+            label="Who is the sender?"
+            id="ripple-address-lookup"
+            placeholder="Enter a federated address"
+          />
+        </section>
+        <section className="flow-step">
+          <BridgeQuoteInquiry
+            isDisabled={(this.state.currentStep !== 2) ? true : false}
+            onSuccessCb={this.completeStep2}
+            federatedAddress={this.state.federatedAddress}
+            bridgeQuoteUrl={this.state.bridgeQuoteUrl}
+          />
+        </section>
+        <section className="flow-step">
+          <BridgeQuoteAccept
+            isDisabled={(this.state.currentStep !== 3) ? true : false}
+            onSuccessCb={this.completeStep3}
+            bridgeQuoteUrl={this.state.bridgeQuoteUrl}
+            quotes={this.state.quotes}
+          />
+        </section>
+        <section className="flow-step">
+          <BridgeQuoteAcceptedQuote
+            isDisabled={(this.state.currentStep !== 4) ? true: false}
+            amount={this.state.acceptedQuoteAmount}
+            currency={this.state.acceptedQuoteCurrency}
+            destinationAddress={this.state.acceptedQuoteDestinationAddress}
+          />
+        </section>
       </div>
     );
   }

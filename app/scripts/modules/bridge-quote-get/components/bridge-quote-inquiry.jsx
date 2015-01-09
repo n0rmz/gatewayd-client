@@ -13,6 +13,12 @@ var QuotesCollection = require('../collections/quotes');
 var FormValidationMixin = require('../../../shared/mixins/components/form_validation_mixin');
 
 var QuoteInquiryForm = React.createClass({
+  getDefaultProps: function() {
+    return {
+      wrapperClassName: ''
+    };
+  },
+
   mixins: [FormValidationMixin],
 
   model: BridgeQuoteInquiryModel,
@@ -182,7 +188,7 @@ var QuoteInquiryForm = React.createClass({
     var source_address = this.state.source_address;
 
     return (
-      <form onSubmit={this.handleSubmit} className={'flow-step' + (isDisabled ? ' disabled' : ' active')}>
+      <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>
         <Input
           type="text"
           ref="destination_address"

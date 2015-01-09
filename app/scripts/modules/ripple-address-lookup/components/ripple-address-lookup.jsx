@@ -16,6 +16,7 @@ var RippleAddressLookup = React.createClass({
     return {
       placeholder: '',
       id: '',
+      wrapperClassName: '',
       label: '',
       labelClassName: ''
     };
@@ -125,7 +126,7 @@ var RippleAddressLookup = React.createClass({
 
 
     return (
-      <form onSubmit={this.handleSubmit} className={'flow-step' + (isDisabled ? ' disabled' : ' active')}>
+      <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>
         <div className="form-group">
           <Input
             disabled={isDisabled}

@@ -14,14 +14,15 @@ var BridgeQuoteItem = require('./bridge-quote-item.jsx');
 var BridgeQuoteAcceptedQuote = require('./bridge-quote-accepted-quote.jsx');
 
 var QuoteAccept = React.createClass({
-  propTypes: {
-    bridgeQuoteUrl: React.PropTypes.string
-  },
 
   getDefaultProps: function() {
     return {
       wrapperClassName: ''
     };
+  },
+
+  propTypes: {
+    bridgeQuoteUrl: React.PropTypes.string
   },
 
   messages: {
@@ -72,6 +73,7 @@ var QuoteAccept = React.createClass({
     var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
     var credentials = this.getSecret('credentials');
 
+    //todo: move this into the model logic
     $.ajax({
       type: 'POST',
       url: bridgePaymentsUrl,
