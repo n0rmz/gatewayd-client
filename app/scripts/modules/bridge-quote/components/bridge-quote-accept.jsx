@@ -18,23 +18,17 @@ var QuoteAccept = React.createClass({
     bridgeQuoteUrl: React.PropTypes.string
   },
 
+  getDefaultProps: function() {
+    return {
+      wrapperClassName: ''
+    };
+  },
+
   messages: {
     disabled: '',
     prompt: 'Please choose a quote',
     success: 'Quote submitted',
     error: 'Quoting service failed'
-  },
-
-  selectMessage: function() {
-    var selectedMessage = '';
-
-    if (this.state.quoteAccepted) {
-      selectedMessage = this.messages.success;
-    } else if (this.props.isDisabled) {
-      selectedMessage = this.messages.prompt;
-    }
-
-    return selectedMessage;
   },
 
   getSecret: function(key) {
@@ -45,8 +39,16 @@ var QuoteAccept = React.createClass({
     return false;
   },
 
+  // TODO - complete this when accept endpoint is complete
   handleSuccess: function() {
     // continue to step 4
+    console.log('success', arguments);
+
+    // if (_.isFunction(this.props.onSuccessCb)) {
+    //   this.props.onSuccessCb({
+    //     acceptedQuote: collection.toJSON()
+    //   });
+    // }
   },
 
   handleFail: function(errorMessage) {
@@ -70,15 +72,6 @@ var QuoteAccept = React.createClass({
     var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
     var credentials = this.getSecret('credentials');
 
-    this.setState({
-      quoteAccepted: true,
-      acceptedQuote: {
-        amount: quoteToSubmit.wallet_payment.primary_amount.amount,
-        currency: quoteToSubmit.wallet_payment.primary_amount.currency,
-        destinationAddress: quoteToSubmit.wallet_payment.destination
-      }
-    });
-
     $.ajax({
       type: 'POST',
       url: bridgePaymentsUrl,
@@ -88,6 +81,19 @@ var QuoteAccept = React.createClass({
       },
       done: this.handleSuccess,
       fail: this.handleFail
+    });
+
+    // TODO - move this to handleSuccess when accept endpoint is complete
+    if (_.isFunction(this.props.onSuccessCb)) {
+      this.props.onSuccessCb({
+        acceptedQuoteAmount: quoteToSubmit.wallet_payment.primary_amount.amount,
+        acceptedQuoteCurrency: quoteToSubmit.wallet_payment.primary_amount.currency,
+        acceptedQuoteDestinationAddress: quoteToSubmit.wallet_payment.destination
+      });
+    }
+
+    this.setState({
+      quoteAccepted: true
     });
   },
 
@@ -131,8 +137,8 @@ var QuoteAccept = React.createClass({
   getInitialState: function() {
     return {
       quotes: {},
-      quoteAccepted: false,
-      acceptedQuote: ''
+      acceptedQuote: '',
+      quoteAccepted: false
     };
   },
 
@@ -156,8 +162,8 @@ var QuoteAccept = React.createClass({
     var quotes = this.buildQuoteRenderables();
 
     return (
-      <div className={'flow-step' + (this.props.isDisabled ? ' disabled' : ' active')}>
-        { !this.props.isDisabled ?
+      <div className={this.props.wrapperClassName}>
+        { (!this.props.isDisabled || this.state.quoteAccepted) ?
           <div>
             <h4>{this.messages.prompt}</h4>
             <ul className="list-group">
@@ -165,15 +171,6 @@ var QuoteAccept = React.createClass({
             </ul>
           </div>
           : false
-        }
-        {
-          this.state.quoteAccepted ?
-            <BridgeQuoteAcceptedQuote
-              amount={this.state.acceptedQuote.amount}
-              currency={this.state.acceptedQuote.currency}
-              destinationAddress={this.state.acceptedQuote.destinationAddress}
-            />
-            : false
         }
       </div>
     );

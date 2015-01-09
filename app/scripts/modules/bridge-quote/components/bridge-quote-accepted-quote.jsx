@@ -11,13 +11,19 @@ var BridgeQuoteAcceptedQuote = React.createClass({
     destinationAddress: React.PropTypes.string
   },
 
+  getDefaultProps: function() {
+    return {
+      wrapperClassName: ''
+    };
+  },
+
   render: function() {
     var amount = this.props.amount;
     var currency = this.props.currency;
     var destinationAddress = this.props.destinationAddress;
 
     return(
-      <div>
+      <div className={this.props.wrapperClassName}>
         <h4>Quote Accepted</h4>
         <ul className="list-group">
           <li className="list-group-item" key={_.uniqueId()}>

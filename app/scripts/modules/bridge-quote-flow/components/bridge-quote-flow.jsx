@@ -6,6 +6,7 @@ var Button = require('react-bootstrap').Button;
 var RippleAddressLookup = require('../../ripple-address-lookup/components/ripple-address-lookup.jsx');
 var BridgeQuoteInquiry = require('../../bridge-quote-get/components/bridge-quote-inquiry.jsx');
 var BridgeQuoteAccept = require('../../bridge-quote/components/bridge-quote-accept.jsx');
+var BridgeQuoteAcceptedQuote = require('../../bridge-quote/components/bridge-quote-accepted-quote.jsx');
 
 var Payment = React.createClass({
 
@@ -16,7 +17,10 @@ var Payment = React.createClass({
       currentStep: 1,
       federatedAddress: '',
       bridgeQuoteUrl: '',
-      quotes: {}
+      quotes: {},
+      acceptedQuoteAmount: null,
+      acceptedQuoteCurrency: '',
+      acceptedQuoteDestinationAddress: ''
     };
   },
 
@@ -41,12 +45,6 @@ var Payment = React.createClass({
 
   completeStep3: function(data) {
     console.log('step 3 completed', arguments);
-    this.setState(data);
-    this.incrementStep();
-  },
-
-  completeStep4: function(data) {
-    console.log('step 4 completed', arguments);
     this.setState(data);
     this.incrementStep();
   },
@@ -80,6 +78,12 @@ var Payment = React.createClass({
           onSuccessCb={this.completeStep3}
           bridgeQuoteUrl={this.state.bridgeQuoteUrl}
           quotes={this.state.quotes}
+        />
+        <BridgeQuoteAcceptedQuote
+          isDisabled={(this.state.currentStep !== 4) ? true: false}
+          amount={this.state.acceptedQuoteAmount}
+          currency={this.state.acceptedQuoteCurrency}
+          destinationAddress={this.state.acceptedQuoteDestinationAddress}
         />
       </div>
     );
