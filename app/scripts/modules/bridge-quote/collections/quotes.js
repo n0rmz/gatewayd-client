@@ -38,22 +38,12 @@ var Quotes = Backbone.Collection.extend({
   dispatcherCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[quoteConfigActions.setTemplateUrl] = this.setTemplateUrl;
     handleAction[quoteConfigActions.updateUrlWithParams] = this.updateUrlWithParams;
     handleAction[quoteConfigActions.fetchQuotes] = this.fetchQuotes;
 
     if (!_.isUndefined(this[payload.actionType])) {
       this[payload.actionType](payload.data);
     }
-  },
-
-  // sets the url based on webfinger templated links
-  setTemplateUrl: function(newQuotingUrl) {
-    if (_.isUndefined(newQuotingUrl)) {
-      return false;
-    }
-
-    this.url = newQuotingUrl;
   },
 
   // update template url with real params
@@ -69,6 +59,8 @@ var Quotes = Backbone.Collection.extend({
     // updatedUrl = updatedUrl.replace(/{receiver}/, quoteQueryParams.destination_address);
     // updatedUrl = updatedUrl.replace(/{amount}/,
     //   quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency);
+    //
+    console.log("aaaaaaaaaaaaaaaaaaaaa", this.url);
 
     updatedUrl = path.join(
       updatedUrl,
@@ -81,10 +73,8 @@ var Quotes = Backbone.Collection.extend({
     this.url = updatedUrl;
   },
 
-  fetchQuotes: function(quoteQueryParams) {
+  fetchQuotes: function() {
     var credentials = this.getSecret('credentials');
-
-    this.updateUrlWithParams(quoteQueryParams);
 
     this.fetch({
       beforeSend: function (xhr) {

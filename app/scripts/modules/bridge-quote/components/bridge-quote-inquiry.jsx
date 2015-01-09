@@ -9,6 +9,7 @@ var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var quoteActions = require('../actions');
 var BridgeQuoteInquiryModel = require('../models/quote-inquiry');
+var QuotesCollection = require('../collections/quotes');
 var FormValidationMixin = require('../../../shared/mixins/components/form_validation_mixin');
 
 var QuoteInquiryForm = React.createClass({
@@ -55,10 +56,14 @@ var QuoteInquiryForm = React.createClass({
   // list of custom event bindings and actions on mount
   // used in componentDidMount mixin method
   handleAfterMount: function() {
+    this.collection = new QuotesCollection({url: this.props.bridgeQuoteUrl});
+
     this.model.on('change:destination_address', this.updateDestinationAddress);
     this.model.on('change:destination_currency', this.updateDestinationCurrency);
     this.model.on('change:destination_amount', this.updateDestinationAmount);
     this.model.on('error', this.handleError);
+
+    //todo: bind to collection error and success foo
   },
 
   // list of custom event unbindings and actions on unmount
@@ -124,23 +129,25 @@ var QuoteInquiryForm = React.createClass({
     });
   },
 
+  createCollectionUrl: function() {
+    var url = this.props.bridgeQuoteUrl;
+
+    return url;
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
 
-    // set hidden input field value in model
-    // todo - let's review if we need to use hidden inputs in this context
-    quoteActions.updateAttributeData('source_address', this.props.federatedAddress);
-
-    var quoteQueryParams = this.buildFormObject(this.refs);
+    var quoteQueryParams = _.extend({source_address: this.props.federatedAddress},
+                                    this.buildFormObject(this.refs));
 
     this.setState({
       submitButtonLabel: 'Getting Quotes...',
     });
 
     if (this.model.isValid()) {
-      quoteActions.setTemplateUrl(this.props.bridgeQuoteUrl);
-
-      quoteActions.fetchQuotes(quoteQueryParams);
+      quoteActions.updateUrlWithParams(quoteQueryParams);
+      quoteActions.fetchQuotes();
     } else {
       this.handleSubmissionError();
     }
@@ -193,12 +200,6 @@ var QuoteInquiryForm = React.createClass({
           hasFeedback
         />
         {this.errorMessageLabel(destination_currency.errorMessage)}
-
-        <Input
-          type="hidden"
-          ref="source_address"
-          value={this.props.federatedAddress}
-        />
 
         <h5><strong>Source Address:</strong></h5>
         <p>{this.props.federatedAddress}</p>

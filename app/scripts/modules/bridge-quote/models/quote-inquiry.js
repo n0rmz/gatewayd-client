@@ -12,16 +12,12 @@ Backbone.$ = $;
 
 var QuoteInquiryForm = Backbone.Model.extend({
   defaults: {
-    source_address: '',
     destination_address: '',
     destination_currency: '',
     destination_amount: NaN
   },
 
   validationRules: {
-    source_address: {
-      validators: ['isRequired', 'isString', 'minLength:1']
-    },
     destination_address: {
       validators: ['isRequired', 'isString', 'minLength:1']
     },
