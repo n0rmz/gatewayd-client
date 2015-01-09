@@ -131,6 +131,7 @@ var QuoteAccept = React.createClass({
           id={id}
           quoteData={quoteData}
           handleClick={_this.submitQuote}
+          isDisabled={_this.props.isDisabled}
         />
       );
     });

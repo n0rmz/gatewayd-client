@@ -8,7 +8,8 @@ var BridgeQuoteItem = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     quoteData: React.PropTypes.object,
-    handleClick: React.PropTypes.func
+    handleClick: React.PropTypes.func,
+    isDisabled: React.PropTypes.bool
   },
 
   acceptQuote: function() {
@@ -29,6 +30,7 @@ var BridgeQuoteItem = React.createClass({
             <Button
               bsStyle="info"
               onClick={this.acceptQuote}
+              disabled={this.props.isDisabled}
             >
               Accept
             </Button>
