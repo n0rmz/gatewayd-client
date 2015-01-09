@@ -1,5 +1,6 @@
 {
   "actions": {
+    "setQuotingUrl": "setQuotingUrl",
     "updateUrlWithParams": "updateUrlWithParams",
     "reset": "reset",
     "validateField": "validateField",

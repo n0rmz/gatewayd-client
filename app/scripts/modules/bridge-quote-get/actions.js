@@ -4,6 +4,13 @@ var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var quoteActions = require('./config.json').actions;
 
 var actions = {
+  setQuotingUrl: function(newUrl) {
+    adminDispatcher.handleEvent({
+      actionType: quoteActions.setQuotingUrl,
+      data: newUrl
+    });
+  },
+
   updateUrlWithParams: function(quoteQueryParams) {
     adminDispatcher.handleEvent({
       actionType: quoteActions.updateUrlWithParams,

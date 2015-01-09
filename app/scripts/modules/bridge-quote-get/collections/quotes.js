@@ -29,12 +29,8 @@ var Quotes = Backbone.Collection.extend({
     return b.id - a.id; // by cheapest path?
   },
 
-  initialize: function(data) {
+  initialize: function() {
     _.bindAll(this);
-
-    if (data.url) {
-      this.baseUrl = data.url;
-    }
 
     adminDispatcher.register(this.dispatcherCallback);
   },
@@ -42,12 +38,21 @@ var Quotes = Backbone.Collection.extend({
   dispatcherCallback: function(payload) {
     var handleAction = {};
 
+    handleAction[quoteConfigActions.setQuotingUrl] = this.setQuotingUrl;
     handleAction[quoteConfigActions.updateUrlWithParams] = this.updateUrlWithParams;
     handleAction[quoteConfigActions.fetchQuotes] = this.fetchQuotes;
 
     if (!_.isUndefined(this[payload.actionType])) {
       this[payload.actionType](payload.data);
     }
+  },
+
+  setQuotingUrl: function(newUrl) {
+    if (_.isEmpty(newUrl) || _.isUndefined(newUrl)) {
+      return false;
+    }
+
+    this.baseUrl = newUrl;
   },
 
   // update template url with real params
@@ -62,7 +67,6 @@ var Quotes = Backbone.Collection.extend({
     // updatedUrl = updatedUrl.replace(/{receiver}/, quoteQueryParams.destination_address);
     // updatedUrl = updatedUrl.replace(/{amount}/,
     //   quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency);
-    //
 
     this.url = path.join(
       this.baseUrl,

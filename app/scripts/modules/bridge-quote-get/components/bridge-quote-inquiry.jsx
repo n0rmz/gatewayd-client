@@ -17,6 +17,8 @@ var QuoteInquiryForm = React.createClass({
 
   model: BridgeQuoteInquiryModel,
 
+  collection: new QuotesCollection(),
+
   refNameTypeMap: {
     source_address: 'string',
     destination_address: 'string',
@@ -61,13 +63,15 @@ var QuoteInquiryForm = React.createClass({
     this.model.on('change:destination_amount', this.updateDestinationAmount);
     this.model.on('error', this.handleError);
 
-    //todo: bind to collection error and success foo
+    this.collection.on('sync', this.handleSuccess);
+    this.collection.on('error', this.handleError);
   },
 
   // list of custom event unbindings and actions on unmount
   // used in componentWillUnmount mixin method
   handleAfterUnmount: function() {
     this.model.off('change error');
+    this.collection.off('sync error');
     quoteActions.reset();
   },
 
@@ -93,15 +97,37 @@ var QuoteInquiryForm = React.createClass({
   },
 
   //TODO use this to check if model is valid. Part of todo below
-  handleError: function() {
+  handleError: function(collection, error) {
+    console.log('Erra', arguments);
+    console.log('error.responseText', JSON.parse(error.responseText).errors[0]);
+
+    this.setState({
+      formError: JSON.parse(error.responseText).errors[0],
+      submitButtonLabel: 'Re-Submit Quote Request?'
+    });
   },
 
-  handleSuccess: function() {
-    console.log("success", arguments);
+  handleSuccess: function(collection) {
+    if (!collection.length) {
+      this.handleError(collection, {
+        error: {
+          responseText: '{error: ["No quotes available"]}'
+        }
+      });
+
+      return false;
+    }
 
     if (_.isFunction(this.props.onSuccessCb)) {
-      this.props.onSuccessCb({});
+      this.props.onSuccessCb({
+        quotes: collection.toJSON()
+      });
     }
+
+    this.setState({
+      submitButtonLabel: 'Quotes Retrieved',
+      formError: ''
+    });
   },
 
   // list of actions to invoke after form input changes
@@ -121,11 +147,7 @@ var QuoteInquiryForm = React.createClass({
   handleAfterCreate: function(data) {},
 
   // on model sync error
-  handleSubmissionError: function() {
-    this.setState({
-      submitButtonLabel: 'Re-Submit Quote Request?',
-    });
-  },
+  handleSubmissionError: function() {},
 
   createCollectionUrl: function() {
     var url = this.props.bridgeQuoteUrl;
@@ -139,14 +161,12 @@ var QuoteInquiryForm = React.createClass({
     var quoteQueryParams = _.extend({source_address: this.props.federatedAddress},
                                     this.buildFormObject(this.refs));
 
-    this.collection = new QuotesCollection({url: this.props.bridgeQuoteUrl});
-
     this.setState({
       submitButtonLabel: 'Getting Quotes...',
     });
 
     if (this.model.isValid()) {
-      console.log("model is valid");
+      quoteActions.setQuotingUrl(this.props.bridgeQuoteUrl);
       quoteActions.updateUrlWithParams(quoteQueryParams);
       quoteActions.fetchQuotes();
     } else {
@@ -202,8 +222,6 @@ var QuoteInquiryForm = React.createClass({
         />
         {this.errorMessageLabel(destination_currency.errorMessage)}
 
-        <h5><strong>Source Address:</strong></h5>
-        <p>{this.props.federatedAddress}</p>
         <br />
 
         <Button
@@ -215,6 +233,7 @@ var QuoteInquiryForm = React.createClass({
         >
           {this.state.submitButtonLabel}
         </Button>
+        {this.errorMessageLabel(this.state.formError)}
         <br />
       </form>
     );

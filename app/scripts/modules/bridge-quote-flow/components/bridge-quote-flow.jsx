@@ -15,7 +15,8 @@ var Payment = React.createClass({
     return {
       currentStep: 1,
       federatedAddress: '',
-      bridgeQuoteUrl: ''
+      bridgeQuoteUrl: '',
+      quotes: {}
     };
   },
 
@@ -78,6 +79,7 @@ var Payment = React.createClass({
           isDisabled={(this.state.currentStep !== 3) ? true : false}
           onSuccessCb={this.completeStep3}
           bridgeQuoteUrl={this.state.bridgeQuoteUrl}
+          quotes={this.state.quotes}
         />
       </div>
     );

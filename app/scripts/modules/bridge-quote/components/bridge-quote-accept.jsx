@@ -106,6 +106,28 @@ var QuoteAccept = React.createClass({
     });
   },
 
+  buildQuoteRenderables: function() {
+    if (!this.state.quotes.length) {
+      return [];
+    }
+
+    var _this = this;
+
+    return _.map(this.state.quotes, function(quote) {
+      var quoteData = quote.wallet_payment.primary_amount;
+      var id = quote.cid;
+
+      return (
+        <BridgeQuoteItem
+          key={id}
+          id={id}
+          quoteData={quoteData}
+          handleClick={_this.submitQuote}
+        />
+      );
+    });
+  },
+
   getInitialState: function() {
     return {
       quotes: {},
@@ -122,22 +144,16 @@ var QuoteAccept = React.createClass({
     collection.off('sync');
   },
 
+  componentWillReceiveProps: function(props) {
+    if (props.quotes) {
+      this.setState({
+        quotes: props.quotes
+      });
+    }
+  },
+
   render: function() {
-    var _this = this;
-
-    var quotes = _.map(this.state.quotes, function(quote) {
-      var quoteData = quote.wallet_payment.primary_amount;
-      var id = quote.cid;
-
-      return (
-        <BridgeQuoteItem
-          key={id}
-          id={id}
-          quoteData={quoteData}
-          handleClick={_this.submitQuote}
-        />
-      );
-    });
+    var quotes = this.buildQuoteRenderables();
 
     return (
       <div className={'flow-step' + (this.props.isDisabled ? ' disabled' : ' active')}>
