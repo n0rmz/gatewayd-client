@@ -56,8 +56,6 @@ var QuoteInquiryForm = React.createClass({
   // list of custom event bindings and actions on mount
   // used in componentDidMount mixin method
   handleAfterMount: function() {
-    this.collection = new QuotesCollection({url: this.props.bridgeQuoteUrl});
-
     this.model.on('change:destination_address', this.updateDestinationAddress);
     this.model.on('change:destination_currency', this.updateDestinationCurrency);
     this.model.on('change:destination_amount', this.updateDestinationAmount);
@@ -141,11 +139,14 @@ var QuoteInquiryForm = React.createClass({
     var quoteQueryParams = _.extend({source_address: this.props.federatedAddress},
                                     this.buildFormObject(this.refs));
 
+    this.collection = new QuotesCollection({url: this.props.bridgeQuoteUrl});
+
     this.setState({
       submitButtonLabel: 'Getting Quotes...',
     });
 
     if (this.model.isValid()) {
+      console.log("model is valid");
       quoteActions.updateUrlWithParams(quoteQueryParams);
       quoteActions.fetchQuotes();
     } else {

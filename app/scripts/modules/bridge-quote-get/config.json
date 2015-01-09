@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "updateUrlWithParams": "updateUrlWithParams",
+    "reset": "reset",
+    "validateField": "validateField",
+    "updateAttributeData": "updateAttributeData",
+    "fetchQuotes": "fetchQuotes"
+  }
+}

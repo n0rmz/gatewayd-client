@@ -4,9 +4,26 @@ var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var quoteActions = require('./config.json').actions;
 
 var actions = {
+  updateUrlWithParams: function(quoteQueryParams) {
+    adminDispatcher.handleEvent({
+      actionType: quoteActions.updateUrlWithParams,
+      data: quoteQueryParams
+    });
+  },
+
   reset: function() {
     adminDispatcher.handleEvent({
       actionType: quoteActions.reset
+    });
+  },
+
+  validateField: function(fieldName, fieldValue) {
+    adminDispatcher.handleEvent({
+      actionType: quoteActions.validateField,
+      data: {
+        fieldName: fieldName,
+        fieldValue: fieldValue
+      }
     });
   },
 
@@ -20,10 +37,10 @@ var actions = {
     });
   },
 
-  sendPaymentComplete: function(payment) {
+  fetchQuotes: function(quoteQueryParams) {
     adminDispatcher.handleEvent({
-      actionType: quoteActions.sendPaymentComplete,
-      data: payment
+      actionType: quoteActions.fetchQuotes,
+      data: quoteQueryParams
     });
   }
 };

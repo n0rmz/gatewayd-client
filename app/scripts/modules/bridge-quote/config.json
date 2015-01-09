@@ -1,11 +1,7 @@
 {
   "actions": {
-    "updateUrlWithParams": "updateUrlWithParams",
-    "flagAsDone": "flagAsDone",
     "reset": "reset",
-    "validateField": "validateField",
     "updateAttributeData": "updateAttributeData",
-    "sendPaymentComplete": "sendPaymentComplete",
-    "fetchQuotes": "fetchQuotes"
+    "sendPaymentComplete": "sendPaymentComplete"
   }
 }
