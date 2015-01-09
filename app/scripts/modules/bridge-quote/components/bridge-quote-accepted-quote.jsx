@@ -21,9 +21,9 @@ var BridgeQuoteAcceptedQuote = React.createClass({
     var amount = this.props.amount;
     var currency = this.props.currency;
     var destinationAddress = this.props.destinationAddress;
-
-    return(
-      <div className={this.props.wrapperClassName}>
+    var contentToRender = '';
+    var confirmationMessage = (
+      <div>
         <h4>Quote Accepted</h4>
         <ul className="list-group">
           <li className="list-group-item" key={_.uniqueId()}>
@@ -48,6 +48,16 @@ var BridgeQuoteAcceptedQuote = React.createClass({
             </div>
           </li>
         </ul>
+      </div>
+    );
+
+    if (!_.isNull(amount) && !_.isEmpty(currency) && !_.isEmpty(destinationAddress)) {
+      contentToRender = confirmationMessage;
+    }
+
+    return(
+      <div className={this.props.wrapperClassName}>
+        {contentToRender}
       </div>
     );
   }
