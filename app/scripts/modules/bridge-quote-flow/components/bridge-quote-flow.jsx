@@ -70,11 +70,12 @@ var Payment = React.createClass({
         />
         <BridgeQuoteInquiry
           isDisabled={(this.state.currentStep !== 2) ? true : false}
+          onSuccessCb={this.completeStep2}
           federatedAddress={this.state.federatedAddress}
           bridgeQuoteUrl={this.state.bridgeQuoteUrl}
-          onSuccessCb={this.completeStep2}
         />
         <BridgeQuoteAccept
+          isDisabled={(this.state.currentStep !== 3) ? true : false}
           onSuccessCb={this.completeStep3}
           bridgeQuoteUrl={this.state.bridgeQuoteUrl}
         />
