@@ -7,6 +7,7 @@ var RippleAddressLookup = require('../../ripple-address-lookup/components/ripple
 var BridgeQuoteInquiry = require('../../bridge-quote-get/components/bridge-quote-inquiry.jsx');
 var BridgeQuoteAccept = require('../../bridge-quote/components/bridge-quote-accept.jsx');
 var BridgeQuoteAcceptedQuote = require('../../bridge-quote/components/bridge-quote-accepted-quote.jsx');
+var Step = require('./flow-step.jsx');
 
 var Payment = React.createClass({
 
@@ -14,7 +15,7 @@ var Payment = React.createClass({
   //for expedience
   getInitialState: function() {
     return {
-      currentStep: 1,
+      activeStep: 1,
       federatedAddress: '',
       bridgeQuoteUrl: '',
       quotes: {},
@@ -26,9 +27,9 @@ var Payment = React.createClass({
 
   incrementStep: function() {
     this.setState({
-      currentStep: (this.state.currentStep + 1)
+      activeStep: (this.state.activeStep + 1)
     });
-    console.log(this.state.currentStep);
+    console.log(this.state.activeStep);
   },
 
   completeStep1: function(data) {
@@ -54,46 +55,61 @@ var Payment = React.createClass({
   },
 
   render: function() {
+    var test = RippleAddressLookup;
+    var activeStep = this.state.activeStep;
 
     return (
       <div className="">
         <h3>Get quote to send a payment
           <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>Cancel and Start Over</Button>
         </h3>
-        <section className="flow-step">
-          <RippleAddressLookup
-            isDisabled={(this.state.currentStep !== 1) ? true : false}
-            onSuccessCb={this.completeStep1}
-            label="Who is the sender?"
-            id="ripple-address-lookup"
-            placeholder="Enter a federated address"
-          />
-        </section>
-        <section className="flow-step">
-          <BridgeQuoteInquiry
-            isDisabled={(this.state.currentStep !== 2) ? true : false}
-            onSuccessCb={this.completeStep2}
-            federatedAddress={this.state.federatedAddress}
-            bridgeQuoteUrl={this.state.bridgeQuoteUrl}
-          />
-        </section>
-        <section className="flow-step">
-          <BridgeQuoteAccept
-            isDisabled={(this.state.currentStep !== 3) ? true : false}
-            onSuccessCb={this.completeStep3}
-            bridgeQuoteUrl={this.state.bridgeQuoteUrl}
-            quotes={this.state.quotes}
-          />
-        </section>
-        <section className="flow-step">
-          <BridgeQuoteAcceptedQuote
-            isDisabled={(this.state.currentStep !== 4) ? true: false}
-            amount={this.state.acceptedQuoteAmount}
-            currency={this.state.acceptedQuoteCurrency}
-            destinationAddress={this.state.acceptedQuoteDestinationAddress}
-          />
-        </section>
-      </div>
+
+        <Step
+          thisStep={1}
+          activeStep={activeStep}
+          stepComponent={RippleAddressLookup}
+          childArgs = {{
+            onSuccessCb: this.completeStep1,
+            label: "Who is the Sender?",
+            id:"ripple-address-lookup",
+            placeholder:"Enter a federated address"
+          }}
+        />
+
+        <Step
+          thisStep={2}
+          activeStep={activeStep}
+          stepComponent={BridgeQuoteInquiry}
+          childArgs={{
+            onSuccessCb: this.completeStep2,
+            federatedAddress: this.state.federatedAddress,
+            bridgeQuoteUrl: this.state.bridgeQuoteUrl
+          }}
+        />
+
+        <Step
+          thisStep={3}
+          activeStep={activeStep}
+          stepComponent={BridgeQuoteAccept}
+          childArgs={{
+            onSuccessCb: this.completeStep3,
+            federatedAddress: this.state.federatedAddress,
+            bridgeQuoteUrl: this.state.bridgeQuoteUrl,
+            quotes: this.state.quotes
+          }}
+        />
+
+        <Step
+          thisStep={4}
+          activeStep={activeStep}
+          stepComponent={BridgeQuoteAcceptedQuote}
+          childArgs={{
+            amount: this.state.acceptedQuoteAmount,
+            currency: this.state.acceptedQuoteCurrency,
+            destinationAddress: this.state.acceptedQuoteDestinationAddress
+          }}
+        />
+    </div>
     );
   }
 });

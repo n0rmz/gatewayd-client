@@ -166,7 +166,7 @@ var QuoteAccept = React.createClass({
 
     return (
       <div className={this.props.wrapperClassName}>
-        { (!this.props.isDisabled || this.state.quoteAccepted) ?
+        { (this.props.isActive || this.state.quoteAccepted) ?
           <div>
             <h4>{this.messages.prompt}</h4>
             <ul className="list-group">

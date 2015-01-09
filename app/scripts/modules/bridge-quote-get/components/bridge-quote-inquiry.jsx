@@ -83,7 +83,7 @@ var QuoteInquiryForm = React.createClass({
 
   componentDidUpdate: function() {
 
-    if (!this.props.isDisabled) {
+    if (this.props.isActive) {
       this.activateForm();
     } else {
 
@@ -181,7 +181,7 @@ var QuoteInquiryForm = React.createClass({
   },
 
   render: function() {
-    var isDisabled = (this.props.isDisabled === true) ? true : false;
+    var isActive = this.props.isActive;
     var destination_address = this.state.destination_address;
     var destination_currency = this.state.destination_currency;
     var destination_amount = this.state.destination_amount;
@@ -194,7 +194,7 @@ var QuoteInquiryForm = React.createClass({
           ref="destination_address"
           label="Destination Address:"
           bsStyle={this.validationMap[destination_address.inputState]}
-          disabled={isDisabled}
+          disabled={!isActive}
           onBlur={this.validateField.bind(this, 'destination_address')}
           onChange={this.handleChange.bind(this, 'destination_address')}
           value={destination_address.value}
@@ -207,7 +207,7 @@ var QuoteInquiryForm = React.createClass({
           ref="destination_amount"
           label="Destination Amount:"
           bsStyle={this.validationMap[destination_amount.inputState]}
-          disabled={isDisabled}
+          disabled={!isActive}
           onBlur={this.validateField.bind(this, 'destination_amount')}
           onChange={this.handleChange.bind(this, 'destination_amount')}
           value={destination_amount.value}
@@ -220,7 +220,7 @@ var QuoteInquiryForm = React.createClass({
           ref="destination_currency"
           label="Destination Currency:"
           bsStyle={this.validationMap[destination_currency.inputState]}
-          disabled={isDisabled}
+          disabled={!isActive}
           onBlur={this.validateField.bind(this, 'destination_currency')}
           onChange={this.handleChange.bind(this, 'destination_currency')}
           value={destination_currency.value}
@@ -234,7 +234,7 @@ var QuoteInquiryForm = React.createClass({
           bsStyle="primary"
           bsSize="large"
           type="submit"
-          disabled={isDisabled}
+          disabled={!isActive}
           block
         >
           {this.state.submitButtonLabel}

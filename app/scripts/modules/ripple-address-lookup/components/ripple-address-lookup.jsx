@@ -115,8 +115,8 @@ var RippleAddressLookup = React.createClass({
   },
 
   render: function() {
-    var isDisabled = (this.props.isDisabled === true) ? true : false;
-    var button = <Button disabled={isDisabled} className="btn-primary" onClick={this.handleSubmit}>Check Address</Button>;
+    var isActive = this.props.isActive;
+    var button = <Button disabled={!isActive} className="btn-primary" onClick={this.handleSubmit}>Check Address</Button>;
 
     //todo: set this up for all alert types
     var alert = (this.state.inputState === "error") ?
@@ -129,7 +129,7 @@ var RippleAddressLookup = React.createClass({
       <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>
         <div className="form-group">
           <Input
-            disabled={isDisabled}
+            disabled={!isActive}
             type="text"
             id={this.props.id}
             label={this.props.label}
