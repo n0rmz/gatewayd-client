@@ -108,7 +108,7 @@ var Payment = React.createClass({
           childArgs={{
             amount: this.state.acceptedQuoteAmount,
             currency: this.state.acceptedQuoteCurrency,
-            destinationAddress: this.state.acceptedQuoteDestinationAddress
+            destinationAddress: (this.state.acceptedQuoteDestinationAddress).toString()
           }}
         />
     </div>

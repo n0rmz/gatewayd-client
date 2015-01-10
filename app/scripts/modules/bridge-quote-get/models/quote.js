@@ -35,6 +35,9 @@ var Quote = Backbone.Model.extend({
     _.bindAll(this);
 
     adminDispatcher.register(this.dispatchCallback);
+
+    //todo: remove this hack when quotes return unique id
+    this.set("id", this.cid);
   },
 
   dispatchCallback: function(payload) {

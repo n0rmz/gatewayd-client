@@ -26,7 +26,6 @@ var QuoteAccept = React.createClass({
   },
 
   messages: {
-    disabled: '',
     prompt: 'Please choose a quote',
     success: 'Quote submitted',
     error: 'Quoting service failed'
@@ -47,7 +46,7 @@ var QuoteAccept = React.createClass({
 
     // if (_.isFunction(this.props.onSuccessCb)) {
     //   this.props.onSuccessCb({
-    //     acceptedQuote: collection.toJSON()
+    //     acceptedQuote: ???.toJSON()
     //   });
     // }
   },
@@ -65,9 +64,10 @@ var QuoteAccept = React.createClass({
     return parser.protocol + '//' + parser.host + '/v1/bridge_payments';
   },
 
-  submitQuote: function(cid) {
-    var quoteToSubmit = _.where(this.state.quotes, {
-      cid: cid
+  submitQuote: function(id) {
+    console.log(arguments);
+    var quoteToSubmit = _.where(this.props.quotes, {
+      id: id
     })[0];
 
     var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
@@ -97,33 +97,19 @@ var QuoteAccept = React.createClass({
     this.setState({
       quoteAccepted: true
     });
+    // end move
   },
 
-  buildQuotes: function(collection) {
-    var models = collection.models;
-
-    // TODO - is there another way to add an identifier to each quote?
-    var quotes = _.map(models, function(quote) {
-      return _.extend(quote.toJSON(), {
-        cid: quote.cid
-      });
-    });
-
-    this.setState({
-      quotes: quotes
-    });
-  },
-
-  buildQuoteRenderables: function() {
-    if (!this.state.quotes.length) {
-      return [];
+  buildQuotes: function() {
+    if (_.isEmpty(this.props.quotes)) {
+      return false;
     }
 
     var _this = this;
 
-    return _.map(this.state.quotes, function(quote) {
-      var quoteData = quote.wallet_payment.primary_amount;
-      var id = quote.cid;
+    return _.map(this.props.quotes, function(quote) {
+      var quoteData = quote.wallet_payment.primary_amount,
+          id = quote.id;
 
       return (
         <BridgeQuoteItem
@@ -139,30 +125,22 @@ var QuoteAccept = React.createClass({
 
   getInitialState: function() {
     return {
-      quotes: {},
       acceptedQuote: '',
       quoteAccepted: false
     };
   },
 
   componentDidMount: function() {
-    collection.on('sync', this.buildQuotes);
+    collection.on('sync', this.handleSuccess);
+    collection.on('error', this.handleFail);
   },
 
   componentWillUnmount: function() {
-    collection.off('sync');
-  },
-
-  componentWillReceiveProps: function(props) {
-    if (props.quotes) {
-      this.setState({
-        quotes: props.quotes
-      });
-    }
+    collection.off('sync error');
   },
 
   render: function() {
-    var quotes = this.buildQuoteRenderables();
+    var quotes = this.buildQuotes();
 
     return (
       <div className={this.props.wrapperClassName}>
