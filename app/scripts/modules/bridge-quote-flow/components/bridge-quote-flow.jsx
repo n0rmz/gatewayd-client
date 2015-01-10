@@ -91,6 +91,7 @@ var Payment = React.createClass({
           thisStep={3}
           activeStep={activeStep}
           stepComponent={BridgeQuoteAccept}
+          hideIfInactive={true}
           childArgs={{
             onSuccessCb: this.completeStep3,
             federatedAddress: this.state.federatedAddress,
@@ -102,6 +103,7 @@ var Payment = React.createClass({
         <Step
           thisStep={4}
           activeStep={activeStep}
+          hideIfInactive={true}
           stepComponent={BridgeQuoteAcceptedQuote}
           childArgs={{
             amount: this.state.acceptedQuoteAmount,

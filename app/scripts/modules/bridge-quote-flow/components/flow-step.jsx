@@ -31,11 +31,24 @@ var FlowStep = React.createClass({
   },
 
   render: function() {
-    var isActive = (this.props.thisStep === this.props.activeStep);
-    var childArgs = _.extend({isActive: isActive}, this.props.childArgs);
+    var isActive, childArgs, getWrapperClass;
+
+    isActive = (this.props.thisStep === this.props.activeStep);
+    childArgs = _.extend({isActive: isActive}, this.props.childArgs);
+    getWrapperClass = function(hideIfInactive) {
+      var className = ['flow-step'];
+
+      className.push(isActive ? 'active' : 'disabled');
+
+      if (hideIfInactive && !isActive) {
+        className.push('hide');
+      }
+
+      return className.join(' ');
+    };
 
     return (
-      <div className={"flow-step" + (isActive ? ' active' : ' disabled')}>
+      <div className={getWrapperClass(this.props.hideIfInactive)}>
         <this.props.stepComponent {...childArgs} />
       </div>
     );
