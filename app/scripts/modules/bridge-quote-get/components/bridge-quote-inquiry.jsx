@@ -139,6 +139,10 @@ var QuoteInquiryForm = React.createClass({
   // list of actions to invoke after form input changes
   // used in handleChange mixin method
   handleAfterChange: function(refName, fieldValue) {
+    if (refName === 'destination_currency') {
+      fieldValue = fieldValue.toUpperCase();
+    }
+
     quoteActions.updateAttributeData(refName, fieldValue);
   },
 
