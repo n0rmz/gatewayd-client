@@ -202,34 +202,38 @@ var QuoteInquiryForm = React.createClass({
         />
         {this.errorMessageLabel(destination_address.errorMessage)}
 
-        <Input
-          type="text"
-          ref="destination_amount"
-          label="Destination Amount:"
-          bsStyle={this.validationMap[destination_amount.inputState]}
-          disabled={!isActive}
-          onBlur={this.validateField.bind(this, 'destination_amount')}
-          onChange={this.handleChange.bind(this, 'destination_amount')}
-          value={destination_amount.value}
-          hasFeedback
-        />
-        {this.errorMessageLabel(destination_amount.errorMessage)}
-
-        <Input
-          type="tel"
-          ref="destination_currency"
-          label="Destination Currency:"
-          bsStyle={this.validationMap[destination_currency.inputState]}
-          disabled={!isActive}
-          onBlur={this.validateField.bind(this, 'destination_currency')}
-          onChange={this.handleChange.bind(this, 'destination_currency')}
-          value={destination_currency.value}
-          hasFeedback
-        />
-        {this.errorMessageLabel(destination_currency.errorMessage)}
-
-        <br />
-
+        <div className="row">
+          <div className="col-sm-6">
+            <Input
+              type="text"
+              ref="destination_amount"
+              addonBefore="$"
+              label="Destination Amount:"
+              bsStyle={this.validationMap[destination_amount.inputState]}
+              disabled={!isActive}
+              onBlur={this.validateField.bind(this, 'destination_amount')}
+              onChange={this.handleChange.bind(this, 'destination_amount')}
+              value={destination_amount.value}
+              hasFeedback
+            />
+            {this.errorMessageLabel(destination_amount.errorMessage)}
+          </div>
+          <div className="col-sm-6">
+            <Input
+              type="tel"
+              ref="destination_currency"
+              label="Destination Currency:"
+              bsStyle={this.validationMap[destination_currency.inputState]}
+              disabled={!isActive}
+              onBlur={this.validateField.bind(this, 'destination_currency')}
+              onChange={this.handleChange.bind(this, 'destination_currency')}
+              value={destination_currency.value}
+              hasFeedback
+            />
+            {this.errorMessageLabel(destination_currency.errorMessage)}
+          </div>
+        </div>
+        <br/>
         <Button
           bsStyle="primary"
           bsSize="large"
