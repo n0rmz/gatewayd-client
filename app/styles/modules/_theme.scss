@@ -239,6 +239,11 @@ body {
   right: 122px;
 }
 
+//this is a hack. todo: come up with a better solution
+.col-sm-6 > .form-group .form-control-feedback {
+  right: 0;
+}
+
 .flow-step {
   padding: 10px;
   margin-bottom: 10px;
