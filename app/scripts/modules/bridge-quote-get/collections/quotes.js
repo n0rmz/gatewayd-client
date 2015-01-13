@@ -81,6 +81,7 @@ var Quotes = Backbone.Collection.extend({
     var credentials = this.getSecret('credentials');
 
     this.fetch({
+      contentType: 'application/json',
       beforeSend: function (xhr) {
         xhr.setRequestHeader ('Authorization', credentials);
       }

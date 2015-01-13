@@ -65,7 +65,6 @@ var QuoteAccept = React.createClass({
   },
 
   submitQuote: function(id) {
-    console.log(arguments);
     var quoteToSubmit = _.where(this.props.quotes, {
       id: id
     })[0];
@@ -77,7 +76,9 @@ var QuoteAccept = React.createClass({
     $.ajax({
       type: 'POST',
       url: bridgePaymentsUrl,
-      data: quoteToSubmit,
+      data: {
+        bridge_payments: [quoteToSubmit]
+      },
       beforeSend: function (xhr) {
         xhr.setRequestHeader ('Authorization', credentials);
       },

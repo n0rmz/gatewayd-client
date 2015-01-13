@@ -104,11 +104,18 @@ var QuoteInquiryForm = React.createClass({
 
   //TODO use this to check if model is valid. Part of todo below
   handleError: function(collection, error) {
+    var errorMessage = '';
     console.log('Erra', arguments);
-    console.log('error.responseText', JSON.parse(error.responseText).errors[0]);
+    console.log('error.responseText', error.responseText);
+
+    if (error.responseText === 'Unauthorized') {
+      errorMessage = 'Unauthorized';
+    } else {
+      errorMessage = JSON.parse(error.responseText).errors[0];
+    }
 
     this.setState({
-      formError: JSON.parse(error.responseText).errors[0],
+      formError: errorMessage,
       submitButtonLabel: 'Re-Submit Quote Request?'
     });
   },
@@ -168,7 +175,11 @@ var QuoteInquiryForm = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
 
-    var quoteQueryParams = _.extend({source_address: this.props.federatedAddress},
+    // TODO - maybe append the domain after receiving the webfinger response?
+    var federatedAddressWithDomain =
+      this.props.federatedAddress + '@' + this.props.bridgeQuoteUrl.split('/')[2];
+
+    var quoteQueryParams = _.extend({source_address: federatedAddressWithDomain},
                                     this.buildFormObject(this.refs));
 
     this.setState({
