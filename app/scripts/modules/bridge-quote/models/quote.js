@@ -14,21 +14,20 @@ Backbone.$ = $;
 
 var Quote = Backbone.Model.extend({
   defaults: {
-    direction: '', // to-ripple/from-ripple
-    state    : 'invoice',
-    ripple: {
-      destination_address  : '', // ripple address
-      destination_amount   : 0,
-      destination_currency : '',
-      source_currency      : '',
-      source_amount        : 0
+    source: {},
+    wallet_payment: {
+      destination: '',
+      primary_amount: {
+        amount: '', // number
+        currency: '',
+        issuer: ''
+      }
     },
-    external: {
-      source_address       : '', // starts with 'acct:'
-      destination_address  : '', // starts with 'acct:'
-      destination_currency : '',
-      destination_amount   : 0
-    }
+    destination: {
+      uri: ''
+    },
+    destination_amount: {},
+    parties: {}
   },
 
   initialize: function() {
