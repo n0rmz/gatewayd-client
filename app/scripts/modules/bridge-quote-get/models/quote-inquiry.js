@@ -25,7 +25,7 @@ var QuoteInquiryForm = Backbone.Model.extend({
       validators: ['isRequired', 'isString', 'minLength:3']
     },
     destination_amount: {
-      validators: ['isRequired', 'isNumber']
+      validators: ['isRequired', 'isNumeric']
     }
   },
 

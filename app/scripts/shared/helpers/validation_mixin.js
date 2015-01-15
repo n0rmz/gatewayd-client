@@ -15,6 +15,12 @@ var validationMixin = {
       return (_.isNumber(val) && !_.isNaN(val)) || ('is not a number');
     },
 
+    isNumeric: function(val) {
+      var numberFilterIncludingCommasAndDecimals = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/;
+
+      return numberFilterIncludingCommasAndDecimals.test(val) || ('is not numeric');
+    },
+
     isBoolean: function(val) {
       return _.isBoolean(val) || ('is not a boolean');
     },
