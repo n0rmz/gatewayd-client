@@ -20,10 +20,17 @@ var actions = {
     });
   },
 
-  sendPaymentComplete: function(payment) {
+  setAcceptQuoteUrl: function(urlWithDomain) {
     adminDispatcher.handleEvent({
-      actionType: quoteActions.sendPaymentComplete,
-      data: payment
+      actionType: quoteActions.setAcceptQuoteUrl,
+      data: urlWithDomain
+    });
+  },
+
+  submitQuote: function(quoteId) {
+    adminDispatcher.handleEvent({
+      actionType: quoteActions.submitQuote,
+      data: quoteId
     });
   }
 };

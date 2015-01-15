@@ -41,9 +41,53 @@ var Quote = Backbone.Model.extend({
   },
 
   dispatchCallback: function(payload) {
-    if (!_.isUndefined(this[payload.actionType])) {
-      this[payload.actionType](payload.data);
+    var handleAction = {};
+
+    handleAction[quoteConfigActions.setAcceptQuoteUrl] = this.setAcceptQuoteUrl;
+    handleAction[quoteConfigActions.submitQuote] = this.submitQuote;
+
+    if (!_.isUndefined(handleAction[payload.actionType])) {
+      handleAction[payload.actionType](payload.data);
     }
+  },
+
+  getSecret: function(key) {
+    if (secrets[key]) {
+      return secrets[key];
+    }
+
+    return false;
+  },
+
+  // extract base url from bridge quote url to utilize gatewayd endpoint for submitting quote
+  buildBridgePaymentsUrl: function(urlWithDomain) {
+    var parser = document.createElement('a');
+
+    parser.href = urlWithDomain;
+
+    return parser.protocol + '//' + parser.host + '/v1/bridge_payments';
+  },
+
+  setAcceptQuoteUrl: function(urlWithDomain) {
+    this.url = this.buildBridgePaymentsUrl(urlWithDomain);
+  },
+
+  submitQuote: function(quoteId) {
+    var credentials = this.getSecret('credentials');
+
+    if (quoteId !== this.id) {
+      return false;
+    }
+
+    this.save({
+      bridge_payments: [this.toJSON()]
+    }, {
+      type: 'POST',
+      contentType: 'application/json',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', credentials);
+      }
+    });
   }
 });
 

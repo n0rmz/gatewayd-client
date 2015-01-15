@@ -2,6 +2,7 @@
   "actions": {
     "reset": "reset",
     "updateAttributeData": "updateAttributeData",
-    "sendPaymentComplete": "sendPaymentComplete"
+    "setAcceptQuoteUrlFromBridgeQuoteUrl": "setAcceptQuoteUrlFromBridgeQuoteUrl",
+    "submitQuote": "submitQuote"
   }
 }

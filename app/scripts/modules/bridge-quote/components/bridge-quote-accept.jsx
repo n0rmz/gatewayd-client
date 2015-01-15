@@ -27,74 +27,49 @@ var QuoteAccept = React.createClass({
     error: 'Quoting service failed'
   },
 
-  getSecret: function(key) {
-    if (secrets[key]) {
-      return secrets[key];
-    }
+  handleSuccess: function(model) {
+    var submittedQuote = model.toJSON();
 
-    return false;
-  },
-
-  // TODO - complete this when accept endpoint is complete
-  handleSuccess: function() {
-    // continue to step 4
-    console.log('success', arguments);
-
-    // if (_.isFunction(this.props.onSuccessCb)) {
-    //   this.props.onSuccessCb({
-    //     acceptedQuote: ???.toJSON()
-    //   });
-    // }
-  },
-
-  handleFail: function(errorMessage) {
-    console.warn('error', errorMessage);
-  },
-
-  // extract base url from bridge quote url
-  buildBridgePaymentsUrl: function(bridgeQuoteUrl) {
-    var parser = document.createElement('a');
-
-    parser.href = bridgeQuoteUrl;
-
-    return parser.protocol + '//' + parser.host + '/v1/bridge_payments';
-  },
-
-  submitQuote: function(id) {
-    var quoteToSubmit = _.where(this.props.quotes, {
-      id: id
-    })[0];
-
-    var bridgePaymentsUrl = this.buildBridgePaymentsUrl(this.props.bridgeQuoteUrl);
-    var credentials = this.getSecret('credentials');
-
-    //todo: move this into the model logic
-    $.ajax({
-      type: 'POST',
-      url: bridgePaymentsUrl,
-      data: {
-        bridge_payments: [quoteToSubmit]
-      },
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader ('Authorization', credentials);
-      },
-      done: this.handleSuccess,
-      fail: this.handleFail
-    });
-
-    // TODO - move this to handleSuccess when accept endpoint is complete
     if (_.isFunction(this.props.onSuccessCb)) {
       this.props.onSuccessCb({
-        acceptedQuoteAmount: quoteToSubmit.wallet_payment.primary_amount.amount,
-        acceptedQuoteCurrency: quoteToSubmit.wallet_payment.primary_amount.currency,
-        acceptedQuoteDestinationAddress: quoteToSubmit.wallet_payment.destination
+        acceptedQuoteAmount: submittedQuote.wallet_payment.primary_amount.amount,
+        acceptedQuoteCurrency: submittedQuote.wallet_payment.primary_amount.currency,
+        acceptedQuoteDestinationAddress: submittedQuote.wallet_payment.destination
       });
     }
 
     this.setState({
       quoteAccepted: true
     });
-    // end move
+  },
+
+  getErrorMessage: function(responseText) {
+    var errorMessage = '';
+
+    if (responseText === 'Unauthorized') {
+      errorMessage = 'Unauthorized';
+    } else {
+      errorMessage = JSON.parse(responseText).errors[0];
+    }
+
+    return errorMessage;
+  },
+
+  handleFail: function(model, error) {
+    var errorMessage = this.getErrorMessage(error.responseText);
+
+    this.setState({
+      errorMessage: errorMessage
+    });
+  },
+
+  submitQuote: function(id) {
+    quoteActions.setAcceptQuoteUrl(this.props.bridgeQuoteUrl);
+    quoteActions.submitQuote(id);
+
+    this.setState({
+      errorMessage: ''
+    });
   },
 
   buildQuotes: function() {
@@ -123,7 +98,8 @@ var QuoteAccept = React.createClass({
   getInitialState: function() {
     return {
       acceptedQuote: '',
-      quoteAccepted: false
+      quoteAccepted: false,
+      errorMessage: ''
     };
   },
 
@@ -142,6 +118,18 @@ var QuoteAccept = React.createClass({
     }
   },
 
+  alertErrorMessage: function() {
+    if (_.isEmpty(this.state.errorMessage)) {
+      return false;
+    }
+
+    return (
+      <div className="alert alert-danger">
+        {this.state.errorMessage}
+      </div>
+    );
+  },
+
   render: function() {
     var quotes = this.buildQuotes();
 
@@ -154,6 +142,7 @@ var QuoteAccept = React.createClass({
               <ul className="list-group">
                 {quotes}
               </ul>
+              {this.alertErrorMessage()}
             </div>
             : false
         }
