@@ -13,7 +13,9 @@ var Quotes = Backbone.Collection.extend({
   model: Model,
 
   comparator: function(a, b) {
-    return b.id - a.id; // by cheapest path?
+
+    // sort by lowest currency value (not necessarily the cheapest)
+    return a.wallet_payment.primary_amount.amount - b.wallet_payment.primary_amount.amount;
   },
 
   initialize: function() {
