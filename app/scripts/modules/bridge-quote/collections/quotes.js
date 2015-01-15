@@ -1,10 +1,5 @@
 "use strict";
 
-// todo: clean this up and modularize with variable file name/path
-// handle secrets. Make npm module for this in the future
-var secrets = require('../../../../../secrets');
-
-var path = require('path');
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -16,14 +11,6 @@ Backbone.$ = $;
 
 var Quotes = Backbone.Collection.extend({
   model: Model,
-
-  getSecret: function(key) {
-    if (secrets[key]) {
-      return secrets[key];
-    }
-
-    return false;
-  },
 
   comparator: function(a, b) {
     return b.id - a.id; // by cheapest path?
@@ -38,8 +25,8 @@ var Quotes = Backbone.Collection.extend({
   dispatcherCallback: function(payload) {
     var handleAction = {};
 
-    if (!_.isUndefined(this[payload.actionType])) {
-      this[payload.actionType](payload.data);
+    if (!_.isUndefined(handleAction[payload.actionType])) {
+      handleAction[payload.actionType](payload.data);
     }
   },
 

@@ -29,23 +29,19 @@ var Payment = React.createClass({
     this.setState({
       activeStep: (this.state.activeStep + 1)
     });
-    console.log(this.state.activeStep);
   },
 
   completeStep1: function(data) {
-    console.log('step 1 completed', arguments);
     this.setState(data);
     this.incrementStep();
   },
 
   completeStep2: function(data) {
-    console.log('step 2 completed', arguments);
     this.setState(data);
     this.incrementStep();
   },
 
   completeStep3: function(data) {
-    console.log('step 3 completed', arguments);
     this.setState(data);
     this.incrementStep();
   },

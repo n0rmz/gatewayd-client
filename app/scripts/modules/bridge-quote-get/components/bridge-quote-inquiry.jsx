@@ -2,9 +2,6 @@
 
 var _ = require('lodash');
 var React = require('react');
-var Modal = require('react-bootstrap').Modal;
-var Row = require('react-bootstrap').Row;
-var Col = require('react-bootstrap').Col;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var quoteActions = require('../actions');
@@ -82,7 +79,6 @@ var QuoteInquiryForm = React.createClass({
   },
 
   componentDidUpdate: function() {
-
     if (this.props.isActive) {
       this.activateForm();
     } else {
@@ -102,17 +98,21 @@ var QuoteInquiryForm = React.createClass({
     this.isFirstLoad = false;
   },
 
-  //TODO use this to check if model is valid. Part of todo below
-  handleError: function(collection, error) {
+  getErrorMessage: function(responseText) {
     var errorMessage = '';
-    console.log('Erra', arguments);
-    console.log('error.responseText', error.responseText);
 
-    if (error.responseText === 'Unauthorized') {
+    if (responseText === 'Unauthorized') {
       errorMessage = 'Unauthorized';
     } else {
-      errorMessage = JSON.parse(error.responseText).errors[0];
+      errorMessage = JSON.parse(responseText).errors[0];
     }
+
+    return errorMessage;
+  },
+
+  //TODO use this to check if model is valid. Part of todo below
+  handleError: function(collection, error) {
+    var errorMessage = this.getErrorMessage(error.responseText);
 
     this.setState({
       formError: errorMessage,
@@ -166,33 +166,34 @@ var QuoteInquiryForm = React.createClass({
   // on model sync error
   handleSubmissionError: function() {},
 
-  createCollectionUrl: function() {
-    var url = this.props.bridgeQuoteUrl;
-
-    return url;
+  // TODO - maybe append the domain after receiving the webfinger response?
+  buildFederatedAddressWithDomain: function(federatedAddress, bridgeQuoteUrl) {
+    return federatedAddress + '@' + bridgeQuoteUrl.split('/')[2];
   },
 
   handleSubmit: function(e) {
     e.preventDefault();
 
-    // TODO - maybe append the domain after receiving the webfinger response?
-    var federatedAddressWithDomain =
-      this.props.federatedAddress + '@' + this.props.bridgeQuoteUrl.split('/')[2];
+    if (!this.model.isValid()) {
+      return;
+    }
 
-    var quoteQueryParams = _.extend({source_address: federatedAddressWithDomain},
-                                    this.buildFormObject(this.refs));
+    // append domain to federated address provided in previous form
+    var federatedAddressWithDomain =
+      this.buildFederatedAddressWithDomain(this.props.federatedAddress, this.props.bridgeQuoteUrl);
+
+    // build query params with complete federated address and model attributes
+    var quoteQueryParams = _.extend({
+      source_address: federatedAddressWithDomain
+    }, this.model.toJSON());
 
     this.setState({
       submitButtonLabel: 'Getting Quotes...',
     });
 
-    if (this.model.isValid()) {
-      quoteActions.setQuotingUrl(this.props.bridgeQuoteUrl);
-      quoteActions.updateUrlWithParams(quoteQueryParams);
-      quoteActions.fetchQuotes();
-    } else {
-      this.handleSubmissionError();
-    }
+    quoteActions.setQuotingUrl(this.props.bridgeQuoteUrl);
+    quoteActions.updateUrlWithParams(quoteQueryParams);
+    quoteActions.fetchQuotes();
   },
 
   render: function() {
@@ -220,7 +221,7 @@ var QuoteInquiryForm = React.createClass({
         <div className="row">
           <div className="col-sm-6">
             <Input
-              type="text"
+              type="tel"
               ref="destination_amount"
               addonBefore="$"
               label="Destination Amount:"
@@ -235,7 +236,7 @@ var QuoteInquiryForm = React.createClass({
           </div>
           <div className="col-sm-6">
             <Input
-              type="tel"
+              type="text"
               ref="destination_currency"
               label="Destination Currency:"
               bsStyle={this.validationMap[destination_currency.inputState]}

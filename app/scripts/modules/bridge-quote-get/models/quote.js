@@ -8,7 +8,7 @@ var Backbone = require('backbone');
 var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var quoteActions = require('../config.json').actions;
+var quoteConfigActions = require('../config.json').actions;
 
 Backbone.$ = $;
 
@@ -40,8 +40,11 @@ var Quote = Backbone.Model.extend({
   },
 
   dispatchCallback: function(payload) {
-    if (!_.isUndefined(this[payload.actionType])) {
-      this[payload.actionType](payload.data);
+    var handleAction = {};
+
+
+    if (!_.isUndefined(handleAction[payload.actionType])) {
+      handleAction[payload.actionType](payload.data);
     }
   }
 });

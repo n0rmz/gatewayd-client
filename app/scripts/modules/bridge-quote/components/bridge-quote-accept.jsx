@@ -1,9 +1,5 @@
 "use strict";
 
-// todo: clean this up and modularize with variable file name/path
-// handle secrets. Make npm module for this in the future
-var secrets = require('../../../../../secrets');
-
 var $ = require('jquery');
 var _ = require('lodash');
 var React = require('react');
@@ -140,19 +136,26 @@ var QuoteAccept = React.createClass({
     collection.off('sync error');
   },
 
+  componentWillReceiveProps: function(props) {
+    if (props.quotes.length) {
+      collection.set(props.quotes)
+    }
+  },
+
   render: function() {
     var quotes = this.buildQuotes();
 
     return (
       <div className={this.props.wrapperClassName}>
-        { (this.props.isActive || this.state.quoteAccepted) ?
-          <div>
-            <h4>{this.messages.prompt}</h4>
-            <ul className="list-group">
-              {quotes}
-            </ul>
-          </div>
-          : false
+        {
+          (this.props.isActive || this.state.quoteAccepted) ?
+            <div>
+              <h4>{this.messages.prompt}</h4>
+              <ul className="list-group">
+                {quotes}
+              </ul>
+            </div>
+            : false
         }
       </div>
     );

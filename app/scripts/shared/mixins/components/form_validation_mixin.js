@@ -9,6 +9,11 @@ var FormValidationMixin = {
     invalid: 'warning'
   },
 
+  /*
+    Use refNameTypeMap object in component (made up of ref names and types) to
+    build state object (value, validation state, error message) for
+    each Input field corresponding to ref name
+  */
   initializeRefs: function() {
     var _this = this;
     var formRefs = {};
@@ -60,6 +65,7 @@ var FormValidationMixin = {
     return type === 'number' ? Number(formattedInput) : formattedInput;
   },
 
+  // build object from form to pair form input ref names and their values
   buildFormObject: function(refKeys) {
     var _this = this;
 

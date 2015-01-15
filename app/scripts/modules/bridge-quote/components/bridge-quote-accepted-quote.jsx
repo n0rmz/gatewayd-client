@@ -51,6 +51,7 @@ var BridgeQuoteAcceptedQuote = React.createClass({
       </div>
     );
 
+    // render confirmation message only after quote has been accepted
     if (!_.isNull(amount) && !_.isEmpty(currency) && !_.isEmpty(destinationAddress)) {
       contentToRender = confirmationMessage;
     }

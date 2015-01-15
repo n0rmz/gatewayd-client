@@ -42,8 +42,8 @@ var Quotes = Backbone.Collection.extend({
     handleAction[quoteConfigActions.updateUrlWithParams] = this.updateUrlWithParams;
     handleAction[quoteConfigActions.fetchQuotes] = this.fetchQuotes;
 
-    if (!_.isUndefined(this[payload.actionType])) {
-      this[payload.actionType](payload.data);
+    if (!_.isUndefined(handleAction[payload.actionType])) {
+      handleAction[payload.actionType](payload.data);
     }
   },
 
@@ -61,13 +61,15 @@ var Quotes = Backbone.Collection.extend({
       return false;
     }
 
-    var external = this.get('external');
-
+    // used when bridge quote base url is similar to http://domain.com/{sender}/{receiver}/{amount}
+    // var updatedUrl = this.baseUrl;
     // updatedUrl = updatedUrl.replace(/{sender}/, quoteQueryParams.source_address);
     // updatedUrl = updatedUrl.replace(/{receiver}/, quoteQueryParams.destination_address);
     // updatedUrl = updatedUrl.replace(/{amount}/,
     //   quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency);
+    // this.url = updatedUrl;
 
+    // used when bridge quote base url is similar to http://domain.com
     this.url = path.join(
       this.baseUrl,
       'quotes',
@@ -83,7 +85,7 @@ var Quotes = Backbone.Collection.extend({
     this.fetch({
       contentType: 'application/json',
       beforeSend: function (xhr) {
-        xhr.setRequestHeader ('Authorization', credentials);
+        xhr.setRequestHeader('Authorization', credentials);
       }
     });
   },
