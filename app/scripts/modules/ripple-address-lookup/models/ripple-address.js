@@ -10,6 +10,8 @@ var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var addressActions = require('../config.json').actions;
 
+var appConfig = require('../../../../../app-config.json');
+
 Backbone.$ = $;
 
 var RippleAddress = Backbone.Model.extend({
@@ -29,7 +31,7 @@ var RippleAddress = Backbone.Model.extend({
     }
 
     //todo get this gateway url from input or config
-    return path.join('https://localhost:5000',
+    return path.join(appConfig.baseUrl,
                      '.well-known/webfinger.json?resource=acct:' +
                        encodeURIComponent(this.get('federatedAddress')));
   },
