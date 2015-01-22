@@ -1,9 +1,5 @@
 "use strict";
 
-// todo: clean this up and modularize with variable file name/path
-// handle secrets. Make npm module for this in the future
-var secrets = require('../../../../../secrets');
-
 var path = require('path');
 var _ = require('lodash');
 var $ = require('jquery');
@@ -22,7 +18,7 @@ var Quote = Backbone.Model.extend({
     wallet_payment: {
       destination: '',
       primary_amount: {
-        amount: '', // number
+        amount: '',
         currency: '',
         issuer: ''
       }
@@ -51,14 +47,6 @@ var Quote = Backbone.Model.extend({
     }
   },
 
-  getSecret: function(key) {
-    if (secrets[key]) {
-      return secrets[key];
-    }
-
-    return false;
-  },
-
   // extract base url from bridge quote url to utilize gatewayd endpoint for submitting quote
   buildBridgePaymentsUrl: function(urlWithDomain) {
     var parser = document.createElement('a');
@@ -73,7 +61,7 @@ var Quote = Backbone.Model.extend({
   },
 
   submitQuote: function(quoteId) {
-    var credentials = this.getSecret('credentials');
+    var credentials = '';
 
     if (quoteId !== this.id) {
       return false;
