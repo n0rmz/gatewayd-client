@@ -75,8 +75,8 @@ var Quotes = Backbone.Collection.extend({
     this.url = path.join(
       this.baseUrl,
       'quotes',
-      'acct:' + quoteQueryParams.source_address,
-      'acct:' + quoteQueryParams.destination_address,
+      encodeURIComponent('acct:' + quoteQueryParams.source_address),
+      encodeURIComponent('acct:' + quoteQueryParams.destination_address),
       quoteQueryParams.destination_amount + '+' + quoteQueryParams.destination_currency
     );
   },
