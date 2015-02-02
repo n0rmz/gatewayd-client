@@ -13,6 +13,10 @@ var Sidebar = require('../shared/components/sidebar.jsx');
 // required to use React Bootstrap in child modules
 require('react-bootstrap');
 
+var capitalize = function(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 var topBarConfig = {
   brandName: 'Gatewayd Bridge Quote App',
   wrapperClassName: 'navbar-inverse navbar-fixed-top top-bar container-fluid'
