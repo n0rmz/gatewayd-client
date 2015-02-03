@@ -18,7 +18,7 @@ var capitalize = function(str) {
 };
 
 var topBarConfig = {
-  brandName: 'Gatewayd Bridge Quote App',
+  brandName: capitalize(location.hostname) + ' | Customer Funds Transfer',
   wrapperClassName: 'navbar-inverse navbar-fixed-top top-bar container-fluid'
 };
 
@@ -46,16 +46,14 @@ var App =
             expandSidebar={this.expandSidebar}
           />
           {this.state.showSidebar ?
-            <Sidebar sidebarClassName="sidebar sidebar-wallets">
-            </Sidebar>
-            : false
+            <Sidebar sidebarClassName="sidebar sidebar-wallets"></Sidebar> : false
           }
           <div className="container">
             <div className="row">
               <div className="col-sm-12 col-md-12 main">
-              <DocumentTitle title="Gatewayd Bridge Quote App">
-                <BridgeQuote/>
-              </DocumentTitle>
+                <DocumentTitle title={topBarConfig.brandName}>
+                  <BridgeQuote/>
+                </DocumentTitle>
               </div>
             </div>
           </div>

@@ -22,19 +22,20 @@ var QuoteAccept = React.createClass({
   },
 
   messages: {
-    prompt: 'Please choose a quote',
+    prompt: 'Cost to Sender:',
     success: 'Quote submitted',
     error: 'Quoting service failed'
   },
 
-  handleSuccess: function(model) {
-    var submittedQuote = model.toJSON();
+  handleSuccess: function(acceptedQuoteModel) {
+    var acceptedQuote = acceptedQuoteModel.toJSON();
 
     if (_.isFunction(this.props.onSuccessCb)) {
       this.props.onSuccessCb({
-        acceptedQuoteAmount: submittedQuote.wallet_payment.primary_amount.amount,
-        acceptedQuoteCurrency: submittedQuote.wallet_payment.primary_amount.currency,
-        acceptedQuoteDestinationAddress: submittedQuote.wallet_payment.destination
+        acceptedQuoteAmount: acceptedQuote.wallet_payment.primary_amount.amount,
+        acceptedQuoteCurrency: acceptedQuote.wallet_payment.primary_amount.currency,
+        acceptedQuoteDebitAccount: acceptedQuote.source.account_number,
+        acceptedQuoteCreditAccount: acceptedQuote.wallet_payment.destination_account_number
       });
     }
 

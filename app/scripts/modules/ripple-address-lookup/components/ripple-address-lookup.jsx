@@ -93,8 +93,17 @@ var RippleAddressLookup = React.createClass({
   },
 
   handleError: function(model, response) {
+    var errorMessage;
+
+    // handle all error objects in order
+    if (response.responseJSON) {
+      errorMessage = response.responseJSON.error || "Error";
+    } else {
+      errorMessage = response.statusText || "Error";
+    }
+
     this.setState({inputState: 'error'});
-    this.setMessage(response.responseJSON.error);
+    this.setMessage(errorMessage);
   },
 
   clearInputState: function() {
@@ -115,15 +124,21 @@ var RippleAddressLookup = React.createClass({
   },
 
   render: function() {
-    var isActive = this.props.isActive;
-    var button = <Button disabled={!isActive} className="btn-primary" onClick={this.handleSubmit}>Check Address</Button>;
+    var isActive, button, alert;
+
+    isActive = this.props.isActive;
+    button = (<Button
+      disabled = {!isActive}
+      className = "btn-primary"
+      onClick = {this.handleSubmit}>
+      Check Address
+    </Button>);
 
     //todo: set this up for all alert types
-    var alert = (this.state.inputState === "error") ?
+    alert = (this.state.inputState === "error") ?
       <div className="alert alert-danger">
         {this.state.message}
       </div> : false;
-
 
     return (
       <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>

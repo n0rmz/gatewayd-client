@@ -18,13 +18,14 @@ var BridgeQuoteItem = React.createClass({
 
   render: function() {
     return (
-      <li className="list-group-item">
+      <li className="list-group-item payment-item">
         <div className="row">
-          <div className="col-sm-3 col-sm-offset-2 col-xs-12">
-            Amount: {this.props.quoteData.amount}
-          </div>
-          <div className="col-sm-3 col-xs-12">
-            Currency: {this.props.quoteData.currency}
+          <div className="col-sm-6 col-sm-offset-2 col-xs-12">
+            <p>
+              <span className="header">Amount: </span>
+              <span className="data">{this.props.quoteData.amount} </span>
+              <span className="currency">{this.props.quoteData.currency}</span>
+            </p>
           </div>
           <div className="col-sm-3 col-xs-12">
             <Button
@@ -32,7 +33,7 @@ var BridgeQuoteItem = React.createClass({
               onClick={this.acceptQuote}
               disabled={this.props.isDisabled}
             >
-              Accept
+              Select
             </Button>
           </div>
         </div>

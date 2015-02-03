@@ -21,7 +21,8 @@ var Payment = React.createClass({
       quotes: {},
       acceptedQuoteAmount: null,
       acceptedQuoteCurrency: '',
-      acceptedQuoteDestinationAddress: ''
+      acceptedQuoteDebitAccount: '',
+      acceptedQuoteCreditAccount: ''
     };
   },
 
@@ -56,7 +57,7 @@ var Payment = React.createClass({
 
     return (
       <div className="">
-        <h3>Get quote to send a payment
+        <h3 className="clearfix">
           <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>Cancel and Start Over</Button>
         </h3>
 
@@ -66,7 +67,7 @@ var Payment = React.createClass({
           stepComponent={RippleAddressLookup}
           childArgs = {{
             onSuccessCb: this.completeStep1,
-            label: "Who is the Sender?",
+            label: "Sender:",
             id:"ripple-address-lookup",
             placeholder:"Enter a federated address"
           }}
@@ -102,9 +103,10 @@ var Payment = React.createClass({
           hideIfInactive={true}
           stepComponent={BridgeQuoteAcceptedQuote}
           childArgs={{
-            amount: this.state.acceptedQuoteAmount,
+            amount: Number(this.state.acceptedQuoteAmount),
             currency: this.state.acceptedQuoteCurrency,
-            destinationAddress: (this.state.acceptedQuoteDestinationAddress).toString()
+            debitAccount: this.state.acceptedQuoteDebitAccount,
+            creditAccount: this.state.acceptedQuoteCreditAccount
           }}
         />
     </div>

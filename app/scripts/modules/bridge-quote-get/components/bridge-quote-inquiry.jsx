@@ -208,7 +208,7 @@ var QuoteInquiryForm = React.createClass({
         <Input
           type="text"
           ref="destination_address"
-          label="Destination Address:"
+          label="Receiver's Address:"
           bsStyle={this.validationMap[destination_address.inputState]}
           disabled={!isActive}
           onBlur={this.validateField.bind(this, 'destination_address')}
@@ -224,7 +224,7 @@ var QuoteInquiryForm = React.createClass({
               type="tel"
               ref="destination_amount"
               addonBefore="$"
-              label="Destination Amount:"
+              label="Amount to be Received:"
               bsStyle={this.validationMap[destination_amount.inputState]}
               disabled={!isActive}
               onBlur={this.validateField.bind(this, 'destination_amount')}
@@ -238,7 +238,7 @@ var QuoteInquiryForm = React.createClass({
             <Input
               type="text"
               ref="destination_currency"
-              label="Destination Currency:"
+              label="Currency to be Received:"
               bsStyle={this.validationMap[destination_currency.inputState]}
               disabled={!isActive}
               onBlur={this.validateField.bind(this, 'destination_currency')}
