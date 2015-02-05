@@ -1,5 +1,8 @@
 "use strict";
 
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
 var path = require('path');
 var Button = require('react-bootstrap').Button;
@@ -10,6 +13,8 @@ var BridgeQuoteAcceptedQuote = require('../../bridge-quote/components/bridge-quo
 var Step = require('./flow-step.jsx');
 
 var Payment = React.createClass({
+
+  mixins: [IntlMixin],
 
   //todo - make a real state machine mixin later. Let's hack now
   //for expedience
@@ -52,13 +57,15 @@ var Payment = React.createClass({
   },
 
   render: function() {
-    var test = RippleAddressLookup;
-    var activeStep = this.state.activeStep;
+    var resetButton, activeStep;
+
+    resetButton = <FormattedMessage message={this.getIntlMessage('resetButton')} />;
+    activeStep = this.state.activeStep;
 
     return (
       <div className="">
         <h3 className="clearfix">
-          <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>Cancel and Start Over</Button>
+          <Button bsStyle="warning" className="pull-right" onClick={this.resetForm}>{resetButton}</Button>
         </h3>
 
         <Step
@@ -67,9 +74,7 @@ var Payment = React.createClass({
           stepComponent={RippleAddressLookup}
           childArgs = {{
             onSuccessCb: this.completeStep1,
-            label: "Sender:",
-            id:"ripple-address-lookup",
-            placeholder:"Enter a federated address"
+            id:"ripple-address-lookup"
           }}
         />
 

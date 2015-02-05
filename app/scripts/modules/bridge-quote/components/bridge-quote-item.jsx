@@ -1,10 +1,16 @@
 "use strict";
 
 var _ = require('lodash');
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('React');
 var Button = require('react-bootstrap').Button;
 
 var BridgeQuoteItem = React.createClass({
+
+  mixins: [IntlMixin],
+
   propTypes: {
     id: React.PropTypes.string,
     quoteData: React.PropTypes.object,
@@ -17,12 +23,17 @@ var BridgeQuoteItem = React.createClass({
   },
 
   render: function() {
+    var itemLabel, submitButton;
+
+    itemLabel = <FormattedMessage message={this.getIntlMessage('quoteItemLabel')} />;
+    submitButton = <FormattedMessage message={this.getIntlMessage('quoteItemSubmit')} />;
+
     return (
       <li className="list-group-item payment-item">
         <div className="row">
           <div className="col-sm-6 col-sm-offset-2 col-xs-12">
             <p>
-              <span className="header">Amount: </span>
+              <span className="header">{itemLabel}</span>
               <span className="data">{this.props.quoteData.amount} </span>
               <span className="currency">{this.props.quoteData.currency}</span>
             </p>
@@ -33,7 +44,7 @@ var BridgeQuoteItem = React.createClass({
               onClick={this.acceptQuote}
               disabled={this.props.isDisabled}
             >
-              Select
+              {submitButton}
             </Button>
           </div>
         </div>

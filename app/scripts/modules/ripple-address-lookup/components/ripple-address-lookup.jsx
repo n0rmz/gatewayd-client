@@ -2,6 +2,9 @@
 
 var path = require('path');
 var _ = require('lodash');
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
@@ -12,12 +15,12 @@ var addressModel = new AddressModel();
 
 var RippleAddressLookup = React.createClass({
 
+  mixins: [IntlMixin],
+
   getDefaultProps: function() {
     return {
-      placeholder: '',
       id: '',
       wrapperClassName: '',
-      label: '',
       labelClassName: ''
     };
   },
@@ -111,12 +114,6 @@ var RippleAddressLookup = React.createClass({
     this.setMessage();
   },
 
-  messages: {
-    empty: '',
-    GatewayUserNotFound: 'There is no user with that address at this gateway',
-    InvalidEmailFormat: 'The address does not appear to be valid'
-  },
-
   setMessage: function(message) {
     message = message || 'empty';
 
@@ -124,17 +121,23 @@ var RippleAddressLookup = React.createClass({
   },
 
   render: function() {
-    var isActive, button, alert;
+    var isActive, button, alert, label;
 
     isActive = this.props.isActive;
     button = (<Button
       disabled = {!isActive}
       className = "btn-primary"
       onClick = {this.handleSubmit}>
-      Check Address
+      <FormattedMessage
+        message={this.getIntlMessage('webfingerLookupSubmit')}
+      />
     </Button>);
 
+    label = <FormattedMessage message={this.getIntlMessage('senderLabel')} />;
+
     //todo: set this up for all alert types
+    //won't localize errors at this time
+    //strings returned from server
     alert = (this.state.inputState === "error") ?
       <div className="alert alert-danger">
         {this.state.message}
@@ -147,16 +150,16 @@ var RippleAddressLookup = React.createClass({
             disabled={!isActive}
             type="text"
             id={this.props.id}
-            label={this.props.label}
+            label={label}
+            placeholder={this.getIntlMessage('senderPlaceholder')}
             labelClassName={this.props.labelClassName}
-            placeholder={this.props.placeholder}
             value={this.state.federatedAddress}
             className="form-control"
             buttonAfter={button}
             onChange={this.handleChange}
             bsStyle={this.state.inputState}
-            hasFeedback
             autoFocus={true}
+            hasFeedback
           />
           {alert}
         </div>

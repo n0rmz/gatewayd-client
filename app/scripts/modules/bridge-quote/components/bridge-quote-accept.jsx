@@ -2,6 +2,9 @@
 
 var $ = require('jquery');
 var _ = require('lodash');
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
 var quoteActions = require('../actions');
 var QuotesCollection = require('../collections/quotes');
@@ -10,6 +13,8 @@ var BridgeQuoteItem = require('./bridge-quote-item.jsx');
 var BridgeQuoteAcceptedQuote = require('./bridge-quote-accepted-quote.jsx');
 
 var QuoteAccept = React.createClass({
+
+  mixins: [IntlMixin],
 
   getDefaultProps: function() {
     return {
@@ -22,9 +27,9 @@ var QuoteAccept = React.createClass({
   },
 
   messages: {
-    prompt: 'Cost to Sender:',
-    success: 'Quote submitted',
-    error: 'Quoting service failed'
+    prompt: 'costToSender',
+    success: 'quoteSubmitSuccess',
+    error: 'quoteSubmitError'
   },
 
   handleSuccess: function(acceptedQuoteModel) {
@@ -134,14 +139,15 @@ var QuoteAccept = React.createClass({
   },
 
   render: function() {
-    var quotes = this.buildQuotes();
+    var quotes = this.buildQuotes(),
+        messages = <FormattedMessage message={this.getIntlMessage(this.messages.prompt)} />;
 
     return (
       <div className={this.props.wrapperClassName}>
         {
           (this.props.isActive || this.state.quoteAccepted) ?
             <div>
-              <h4>{this.messages.prompt}</h4>
+              <h4>{messages}</h4>
               <ul className="list-group">
                 {quotes}
               </ul>

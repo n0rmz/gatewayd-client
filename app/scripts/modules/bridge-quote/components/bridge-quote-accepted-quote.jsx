@@ -1,10 +1,17 @@
 "use strict";
 
 var _ = require('lodash');
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+var FormattedHTMLMessage = ReactIntl.FormattedHTMLMessage;
 var React = require('react');
 var Button = require('react-bootstrap').Button;
 
 var BridgeQuoteAcceptedQuote = React.createClass({
+
+  mixins: [IntlMixin],
+
   propTypes: {
     amount: React.PropTypes.number,
     currency: React.PropTypes.string,
@@ -18,36 +25,49 @@ var BridgeQuoteAcceptedQuote = React.createClass({
     };
   },
 
-  render: function() {
-    var amount = this.props.amount;
-    var currency = this.props.currency;
-    var debitAccount = this.props.debitAccount;
-    var creditAccount = this.props.creditAccount;
-    var contentToRender = '';
-    var confirmationMessage = (
+  getConfirmationMessage: function() {
+    var amount = this.props.amount,
+        currency = this.props.currency,
+        debitAccount = this.props.debitAccount,
+        creditAccount = this.props.creditAccount,
+        _this = this;
+
+    if (_.isNull(amount) && _.isEmpty(currency) && _.isEmpty(creditAccount)) {
+      return false;
+    }
+
+    return (
       <div>
-        <h4>Transfer Prepared:</h4>
+        <h4>
+          <FormattedMessage message={_this.getIntlMessage('transferHeader')} />
+        </h4>
         <ul className="list-group">
           <li className="list-group-item payment-item" key={_.uniqueId()}>
             <div className="row">
               <div className="col-sm-6 col-xs-12 col-sm-offset-2">
                 <p>
-                  <span className="header">Amount: </span>
+                  <span className="header">
+                    <FormattedMessage message={_this.getIntlMessage('transferAmountHeader')} />
+                  </span>
                   <span className="data">{amount} </span>
                   <span className="currency">{currency}</span>
                 </p>
                 <p>
-                  <span className="header">Debit Account: </span>
+                  <span className="header">
+                    <FormattedMessage message={_this.getIntlMessage('transferDebitAccount')} />
+                  </span>
                   <span className="data">{debitAccount}</span>
                 </p>
                 <p>
-                  <span className="header">Credit Account: </span>
+                  <span className="header">
+                    <FormattedMessage message={_this.getIntlMessage('transferCreditAccount')} />
+                  </span>
                   <span className="data">{creditAccount}</span>
                 </p>
               </div>
               <div className="col-sm-4 col-xs-12">
                 <Button bsStyle="info" disabled={true}>
-                  Transfer Funds
+                  <FormattedMessage message={_this.getIntlMessage('transferSubmit')} />
                 </Button>
               </div>
             </div>
@@ -55,15 +75,12 @@ var BridgeQuoteAcceptedQuote = React.createClass({
         </ul>
       </div>
     );
+  },
 
-    // render confirmation message only after quote has been accepted
-    if (!_.isNull(amount) && !_.isEmpty(currency) && !_.isEmpty(creditAccount)) {
-      contentToRender = confirmationMessage;
-    }
-
+  render: function() {
     return(
       <div className={this.props.wrapperClassName}>
-        {contentToRender}
+        {this.getConfirmationMessage()}
       </div>
     );
   }

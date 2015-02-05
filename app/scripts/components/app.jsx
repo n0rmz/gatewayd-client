@@ -1,5 +1,7 @@
 "use strict";
 
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
 var React = require('react');
 
 // React Router
@@ -24,6 +26,8 @@ var topBarConfig = {
 
 var App =
   React.createClass({
+
+    mixins: [IntlMixin],
 
     getInitialState: function() {
       return { showSidebar: false };

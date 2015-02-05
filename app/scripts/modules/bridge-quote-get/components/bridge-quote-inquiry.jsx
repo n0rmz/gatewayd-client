@@ -1,5 +1,8 @@
 "use strict";
 
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var _ = require('lodash');
 var React = require('react');
 var Input = require('react-bootstrap').Input;
@@ -16,7 +19,7 @@ var QuoteInquiryForm = React.createClass({
     };
   },
 
-  mixins: [FormValidationMixin],
+  mixins: [IntlMixin, FormValidationMixin],
 
   model: BridgeQuoteInquiryModel,
 
@@ -31,7 +34,7 @@ var QuoteInquiryForm = React.createClass({
 
   // used in getInitialState mixin method
   initialState: {
-    submitButtonLabel: 'Get Quotes'
+    submitButtonLabel: 'quoteSubmitState1'
   },
 
   isFirstLoad: true,
@@ -118,7 +121,7 @@ var QuoteInquiryForm = React.createClass({
 
     this.setState({
       formError: errorMessage,
-      submitButtonLabel: 'Re-Submit Quote Request?'
+      submitButtonLabel: 'quoteSubmitState4'
     });
   },
 
@@ -140,7 +143,7 @@ var QuoteInquiryForm = React.createClass({
     }
 
     this.setState({
-      submitButtonLabel: 'Quotes Retrieved',
+      submitButtonLabel: 'quoteSubmitState3',
       formError: ''
     });
   },
@@ -190,7 +193,7 @@ var QuoteInquiryForm = React.createClass({
     }, this.model.toJSON());
 
     this.setState({
-      submitButtonLabel: 'Getting Quotes...',
+      submitButtonLabel: 'quoteSubmitState2',
     });
 
     quoteActions.setQuotingUrl(this.props.bridgeQuoteUrl);
@@ -199,18 +202,24 @@ var QuoteInquiryForm = React.createClass({
   },
 
   render: function() {
-    var isActive = this.props.isActive;
-    var destination_address = this.state.destination_address;
-    var destination_currency = this.state.destination_currency;
-    var destination_amount = this.state.destination_amount;
-    var source_address = this.state.source_address;
+    var isActive = this.props.isActive,
+        destination_address = this.state.destination_address,
+        destination_currency = this.state.destination_currency,
+        destination_amount = this.state.destination_amount,
+        source_address = this.state.source_address,
+        addressLabel, amountLabel, currencyLabel, getQuoteSubmit;
+
+    addressLabel = <FormattedMessage message={this.getIntlMessage('destinationAddressLabel')} />;
+    amountLabel = <FormattedMessage message={this.getIntlMessage('destinationAmountLabel')} />;
+    currencyLabel = <FormattedMessage message={this.getIntlMessage('destinationCurrencyLabel')} />;
+    getQuoteSubmit = <FormattedMessage message={this.getIntlMessage(this.state.submitButtonLabel)} />;
 
     return (
       <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>
         <Input
           type="text"
           ref="destination_address"
-          label="Receiver's Address:"
+          label={addressLabel}
           bsStyle={this.validationMap[destination_address.inputState]}
           disabled={!isActive}
           onBlur={this.validateField.bind(this, 'destination_address')}
@@ -226,7 +235,7 @@ var QuoteInquiryForm = React.createClass({
               type="tel"
               ref="destination_amount"
               addonBefore="$"
-              label="Amount to be Received:"
+              label={amountLabel}
               bsStyle={this.validationMap[destination_amount.inputState]}
               disabled={!isActive}
               onBlur={this.validateField.bind(this, 'destination_amount')}
@@ -240,7 +249,7 @@ var QuoteInquiryForm = React.createClass({
             <Input
               type="text"
               ref="destination_currency"
-              label="Currency to be Received:"
+              label={currencyLabel}
               bsStyle={this.validationMap[destination_currency.inputState]}
               disabled={!isActive}
               onBlur={this.validateField.bind(this, 'destination_currency')}
@@ -259,7 +268,7 @@ var QuoteInquiryForm = React.createClass({
           disabled={!isActive}
           block
         >
-          {this.state.submitButtonLabel}
+          {getQuoteSubmit}
         </Button>
         {this.errorMessageLabel(this.state.formError)}
         <br />
