@@ -101,7 +101,9 @@ var QuoteInquiryForm = React.createClass({
   getErrorMessage: function(responseText) {
     var errorMessage = '';
 
-    if (responseText === 'Unauthorized') {
+    if (_.isUndefined(responseText)) {
+      errorMessage = 'Connection Refused';
+    } else if (responseText === 'Unauthorized') {
       errorMessage = 'Unauthorized';
     } else {
       errorMessage = JSON.parse(responseText).errors[0];
