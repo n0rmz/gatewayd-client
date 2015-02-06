@@ -13,17 +13,15 @@ The gatewayd quoting app allows gateway customers to query and accept quotes for
     ```
     Make sure these attributes are set as follows:
 
-    {
-        ...
-
-        "SSL": true,
-        "USER_AUTH": false,
-        "BASIC_AUTH": false,
-        "PORT": 5000,
-        "DOMAIN": "localhost:5000",
-
-        ...
-    }
+        {
+            ...
+            "SSL": true,
+            "USER_AUTH": false,
+            "BASIC_AUTH": false,
+            "PORT": 5000,
+            "DOMAIN": "localhost:5000",
+            ...
+        }
 
     PORT and DOMAIN can be changed accordingly (e.g. changing PORT to 5050 and DOMAIN to localhost:5050 on a second gateway).
 
@@ -46,7 +44,7 @@ The gatewayd quoting app allows gateway customers to query and accept quotes for
     $ bower install
     ```
 
-6. Edit the app-config.json file to configure from which gatewayd instance you want to send quotes (baseUrl) and from which port on localhost you want to access the app from (connectPort):
+6. Edit the **app-config.json** file to configure from which gatewayd instance you want to send quotes (*baseUrl*) and from which port on localhost you want to access the app from (*connectPort*):
     ```
     $ vim app-config.json
     ```
@@ -73,11 +71,11 @@ _* This app assumes you've set up "external accounts" (a gateway account and at 
 
 ## How To Use:
 
-1. Enter the federated address (e.g. alice) of the customer requesting quotes and sending funds.
+1. Enter the federated address (e.g. *alice*) of the customer requesting quotes and sending funds.
 
-2. Enter the federated address appended with '@' + the domain of the receiving customer's gateway (e.g. bob@localhost:5050) as well as the receiver's desired amount and currency.
+2. Enter the federated address appended with '@' + the domain of the receiving customer's gateway (e.g. *bob@localhost:5050*) as well as the receiver's desired amount and currency.
 
-3. Select a quote detailing the sending customer's options for payment from the ones available (in the sending customer's available currency and includes fees from the entirety of the path that results in the final value matching the receiver's desired amount).
+3. Select a quote detailing the sending customer's options for payment from the ones available (in the sending customer's available currency and including fees from the entirety of the path that results in the final value matching the receiver's desired amount).
 
 ## Developers
 
