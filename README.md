@@ -1,15 +1,52 @@
 # Gatewayd Quoting App
 
-The gatewayd quoting app allows gateway customers to query and accept quotes for sending funds from their account to another customer account at a local or remote gateway.
+The gatewayd quoting app allows a gateway's external customers to query and accept quotes enabling them to send funds from their account to another customer account at a local or remote gateway.
 
-## How To Set Up:
+### Table of Contents
+- **[Dependencies](#dependencies)**
+- **[How To Set Up](#how-to-set-up)**
+- **[How To Use](#how-to-use)**
+- **[Developers](#developers)**
 
-1. [Set up your gateway(s)](https://ripple.com/build/gatewayd/#gatewayd-usage).
+## Dependencies
+
+[Gatewayd - develop branch](https://github.com/ripple/gatewayd/tree/develop)
+
+```
+$ git checkout develop
+$ git pull
+$ npm install
+```
+
+[Quoting App - task/demo branch](https://github.com/gatewayd/gatewayd-quoting-app/tree/task/demo)
+
+```
+$ git checkout task/demo
+$ git reset --hard origin/task/demo
+```
+
+[Banking App - task/demo branch](https://github.com/gatewayd/gatewayd-banking-app/tree/task/demo)
+
+```
+$ git checkout task/demo
+$ git reset --hard origin/task/demo
+```
+
+[Basic App - task/demo branch](https://github.com/gatewayd/gatewayd-basic-app/tree/task/demo)
+
+```
+$ git checkout task/demo
+$ git reset --hard origin/task/demo
+```
+
+## How To Set Up
+
+1. [Set up your gateway(s)](https://ripple.com/build/gatewayd/#gatewayd-usage) and make sure the branch is correct as per the [app dependencies](#dependencies).
 
 2. Edit each gateway's config file:
 
     ```
-    $ vim conifg/config.json
+    $ vim config/config.json
     ```
     Make sure these attributes are set as follows:
 
@@ -37,14 +74,14 @@ The gatewayd quoting app allows gateway customers to query and accept quotes for
     $ git clone git@github.com:gatewayd/gatewayd-quoting-app.git
     ```
 
-5. Navigate to the cloned directory and install its dependencies:
+5. Navigate to the cloned directory, make sure the branch is correct as per the [app dependencies](#dependencies), and install its dependencies:
 
     ```
     $ npm install
     $ bower install
     ```
 
-6. Edit the **app-config.json** file to configure from which gatewayd instance you want to send quotes (*baseUrl*) and from which port on localhost you want to access the app from (*connectPort*):
+6. Edit the **app-config.json** file to configure which gatewayd instance you want to send quotes from (*baseUrl*) and which port on localhost you want to access the app from (*connectPort*):
     ```
     $ vim app-config.json
     ```
@@ -61,17 +98,17 @@ The gatewayd quoting app allows gateway customers to query and accept quotes for
     $ ulimit -u 1000
     ```
 
-8. In your browser, access the local webapp via the default url:
+8. In your browser, access the local webapp via the default url or the port at localhost specified from step 6:
 
     ```
     http://localhost:7070
     ```
 
-_* This app assumes you've set up "external accounts" (a gateway account and at least one customer account) on your gateway, so if you haven't done so, please create accounts via the [Banking App](https://github.com/gatewayd/gatewayd-banking-app) or manually insert them into your database._
-
 ## How To Use:
 
-1. Enter the federated address (e.g. *alice*) of the customer requesting quotes and sending funds.
+_* This app assumes that you have set up your external accounts (a single gateway account and at least one customer account) on your gateway, so if you haven't done so, please create these accounts via the [Banking App](https://github.com/gatewayd/gatewayd-banking-app) and make sure the branch is correct as per the [app dependencies](#dependencies)._
+
+1. Enter the federated address (e.g. *alice*) of the customer requesting quotes and eventually sending funds.
 
 2. Enter the federated address appended with '@' + the domain of the receiving customer's gateway (e.g. *bob@localhost:5050*) as well as the receiver's desired amount and currency.
 
