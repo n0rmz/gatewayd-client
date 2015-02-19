@@ -32,7 +32,20 @@ initialAppState = {
     message: '',
     bridgeQuoteUrl: ''
   },
-  quote: {}
+  quote: {},
+  bridgeQuoteInquiryForm: {
+    destination_address: {
+      name: 'destination_address',
+      label: 'Destination Address',
+      bsStyle: null,
+      value: 'test',
+      isDisabled: false,
+      isValid: false
+    },
+    destination_amount: {},
+    destination_currency: {},
+    isValid: false
+  }
 };
 
 // empty objects in arguments are required to boot app with initialAppState
@@ -49,6 +62,7 @@ Reflux.StoreMethods.getMoreartyContext = function() {
 // stores MUST be initialized after adding Morearty Context to StoreMethods
 require('./stores/state-machine');
 require('./stores/webfinger');
+require('./stores/quote-inquiry');
 
 AppWrapper = React.createClass({
   mixins: [Morearty.Mixin],

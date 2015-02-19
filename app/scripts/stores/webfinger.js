@@ -9,8 +9,7 @@ var WebfingerStore = Reflux.createStore({
   listenables: ActionCreators,
 
   init: function() {
-    this.rootBinding =
-      this.getMoreartyContext().getBinding();
+    this.rootBinding = this.getMoreartyContext().getBinding();
     this.webfingerBinding = this.rootBinding.sub('webfinger');
   },
 

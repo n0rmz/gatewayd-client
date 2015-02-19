@@ -8,7 +8,9 @@ var ActionCreators = Reflux.createActions([
   'setFederatedAddress',
   'getQuotingAddress',
   'receiveBridgeQuoteUrl',
-  'receiveBridgeQuoteUrlFail'
+  'receiveBridgeQuoteUrlFail',
+  'setInput',
+  'validateInput'
 ]);
 
 ActionCreators.getQuotingAddress.listen(function(federatedAddress) {

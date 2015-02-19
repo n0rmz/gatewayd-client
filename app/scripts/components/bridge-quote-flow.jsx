@@ -10,6 +10,7 @@ var WebfingerLookup = require('./webfinger-lookup.jsx');
 // var BridgeQuoteInquiry = require('./bridge-quote-inquiry.jsx');
 // var BridgeQuoteAccept = require('./bridge-quote-accept.jsx');
 // var BridgeQuoteAcceptedQuote = require('./bridge-quote-accepted-quote.jsx');
+var Input = require('./input-validation.jsx');
 var Step = require('./flow-step.jsx');
 var ActionCreators = require('../actions/ActionCreators');
 
@@ -42,6 +43,7 @@ var BridgeQuoteFlow = React.createClass({
     var stateMachineBinding = binding.sub('stateMachine');
     var webfingerBinding = binding.sub('webfinger');
     var quoteBinding = binding.sub('quote');
+    var destinationAddressBinding = binding.sub('bridgeQuoteInquiryForm.destination_address');
     var resetButton, activeStep;
 
     resetButton = <FormattedMessage message={this.getIntlMessage('resetButton')} />;
@@ -63,6 +65,12 @@ var BridgeQuoteFlow = React.createClass({
             id:'webfinger-lookup',
             binding: webfingerBinding
           }}
+        />
+
+        <Input
+          name='destination_address'
+          type='text'
+          binding={destinationAddressBinding}
         />
 
         {/*
