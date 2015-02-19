@@ -6,7 +6,6 @@ var Branding = require('./branding.jsx');
 var TopBar = React.createClass({
   getDefaultProps: function() {
     return {
-      brandName: 'Hello World',
       wrapperClassName: 'navbar'
     };
   },
@@ -27,7 +26,6 @@ var TopBar = React.createClass({
     return (
       <div className={this.props.wrapperClassName}>
         <Branding
-          brandName={this.props.brandName}
           wrapperClassName={this.props.brandingClassName}
         />
       </div>

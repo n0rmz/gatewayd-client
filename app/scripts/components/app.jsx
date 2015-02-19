@@ -2,6 +2,7 @@
 
 var ReactIntl = require('react-intl');
 var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
 
 // React Router
@@ -15,12 +16,7 @@ var Sidebar = require('../shared/components/sidebar.jsx');
 // required to use React Bootstrap in child modules
 require('react-bootstrap');
 
-var capitalize = function(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
 var topBarConfig = {
-  brandName: capitalize(location.hostname) + ' | Customer Funds Transfer',
   wrapperClassName: 'navbar-inverse navbar-fixed-top top-bar container-fluid'
 };
 
