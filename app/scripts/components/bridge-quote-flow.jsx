@@ -44,6 +44,7 @@ var BridgeQuoteFlow = React.createClass({
     var webfingerBinding = binding.sub('webfinger');
     var quoteBinding = binding.sub('quote');
     var destinationAddressBinding = binding.sub('bridgeQuoteInquiryForm.destination_address');
+    var destinationAmountBinding = binding.sub('bridgeQuoteInquiryForm.destination_amount');
     var resetButton, activeStep;
 
     resetButton = <FormattedMessage message={this.getIntlMessage('resetButton')} />;
@@ -71,6 +72,11 @@ var BridgeQuoteFlow = React.createClass({
           name='destination_address'
           type='text'
           binding={destinationAddressBinding}
+        />
+        <Input
+          name='destination_amount'
+          type='number'
+          binding={destinationAmountBinding}
         />
 
         {/*

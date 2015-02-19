@@ -3,6 +3,7 @@
 var Morearty = require('morearty');
 var Reflux = require('reflux');
 var Checkit = require('checkit');
+console.log('Checkit.Validators', Checkit.Validators);
 var ActionCreators = require('../actions/ActionCreators');
 
 var WebfingerStore = Reflux.createStore({
@@ -10,9 +11,9 @@ var WebfingerStore = Reflux.createStore({
   listenables: ActionCreators,
 
   rules: {
-    destination_address: ['required', 'alphaNumeric'],
-    destination_amount: ['required', 'numeric', 'greaterThan:0'],
-    destination_currency: ['required', 'alphaNumeric']
+    destination_address: ['required', 'minLength:1'],
+    destination_amount: ['required', 'isNumeric', 'greaterThan:0'],
+    destination_currency: ['required', 'minLength:1']
   },
 
   init: function() {
@@ -30,12 +31,26 @@ var WebfingerStore = Reflux.createStore({
   },
 
   onValidateInput: function(attributeName, value) {
+    var binding = this.bridgeQuoteInquiryFormBinding.sub(attributeName);
+
     Checkit.check(attributeName, value, this.rules[attributeName])
     .then((validated) => {
-      console.log(validated);
+      console.log('VALIDATED!!!!!!', validated);
+
+      binding
+        .atomically()
+        .set('bsStyle', 'success')
+        .set('isValid', true)
+        .commit();
     })
-    .catch(Checkit.Error, (error) => {
-      console.log(error.toJSON());
+    .catch((error) => {
+      console.log('ERROR!!!!!!!!', error.message);
+
+      binding
+        .atomically()
+        .set('bsStyle', 'warning')
+        .set('errorMessage', 'BAD')
+        .set('isValid', false);
     });
   }
 });

@@ -40,9 +40,18 @@ initialAppState = {
       bsStyle: null,
       value: 'test',
       isDisabled: false,
-      isValid: false
+      isValid: false,
+      errorMessage: ''
     },
-    destination_amount: {},
+    destination_amount: {
+      name: 'destination_amount',
+      label: 'Destination Amount',
+      bsStyle: null,
+      value: '-1',
+      isDisabled: false,
+      isValid: false,
+      errorMessage: ''
+    },
     destination_currency: {},
     isValid: false
   }
