@@ -4,7 +4,7 @@ var _ = require('lodash');
 var ReactIntl = require('react-intl');
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
-var React = require('React');
+var React = require('react');
 var Button = require('react-bootstrap').Button;
 
 var BridgeQuoteItem = React.createClass({
