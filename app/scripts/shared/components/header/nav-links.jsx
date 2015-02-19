@@ -35,7 +35,7 @@ var NavLinks = React.createClass({
   },
 
   getLinks: function(links) {
-    var items = links.map(function(link, i) {
+    var items = links.map((link, i) => {
       return (
         <li key={i++}>
           <Link to={link.href}>

@@ -85,9 +85,7 @@ var QuoteAccept = React.createClass({
       return false;
     }
 
-    var _this = this;
-
-    return _.map(this.props.quotes, function(quote) {
+    return _.map(this.props.quotes, quote => {
       var quoteData = quote.wallet_payment.primary_amount,
           id = quote.id;
 
@@ -96,8 +94,8 @@ var QuoteAccept = React.createClass({
           key={id}
           id={id}
           quoteData={quoteData}
-          handleClick={_this.submitQuote}
-          isDisabled={_this.props.isDisabled}
+          handleClick={this.submitQuote}
+          isDisabled={this.props.isDisabled}
         />
       );
     });
