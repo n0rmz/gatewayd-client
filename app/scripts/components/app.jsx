@@ -1,17 +1,15 @@
-"use strict";
+'use strict';
 
 var ReactIntl = require('react-intl');
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
+var Router = require('react-router');
+var {Route, Redirect, RouteHandler, Link} = Router;
 
-// React Router
 var DocumentTitle = require('react-document-title');
-var BridgeQuote = require('../modules/bridge-quote-flow/components/bridge-quote-flow.jsx');
-
-// React components
-var TopBar = require('../shared/components/header/top-bar.jsx');
-var Sidebar = require('../shared/components/sidebar.jsx');
+var TopBar = require('scripts/shared/components/header/top-bar.jsx');
+var Sidebar = require('scripts/shared/components/sidebar.jsx');
 
 // required to use React Bootstrap in child modules
 require('react-bootstrap');
@@ -26,18 +24,14 @@ var App =
     mixins: [IntlMixin],
 
     getInitialState: function() {
-      return { showSidebar: false };
+      return {showSidebar: false};
     },
 
     expandSidebar: function() {
-      if (session.isLoggedIn()) {
-        this.setState({showSidebar: this.state.showSidebar ? false : true});
-      } else {
-        this.setState({showSidebar: false});
-      }
+      this.setState({showSidebar: this.state.showSidebar ? false : true});
     },
 
-    render:function(){
+    render: function(){
       return (
         <div>
           <TopBar
@@ -46,17 +40,9 @@ var App =
             expandSidebar={this.expandSidebar}
           />
           {this.state.showSidebar ?
-            <Sidebar sidebarClassName="sidebar sidebar-wallets"></Sidebar> : false
+            <Sidebar sidebarClassName='sidebar sidebar-wallets'></Sidebar> : false
           }
-          <div className="container">
-            <div className="row">
-              <div className="col-sm-12 col-md-12 main">
-                <DocumentTitle title={topBarConfig.brandName}>
-                  <BridgeQuote/>
-                </DocumentTitle>
-              </div>
-            </div>
-          </div>
+          <RouteHandler/>
         </div>
       )
     }
