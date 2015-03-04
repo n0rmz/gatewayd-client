@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 if (!window.Intl) {
   window.Intl = require('intl');
@@ -6,11 +6,14 @@ if (!window.Intl) {
 
 var path = require('path');
 var React = require('react');
-var App = require('./components/app.jsx');
-var stringLib = require('../i18n/messages');
+var Router = require('react-router');
+var appRoutes = require('scripts/components/appRouter.jsx');
+
 
 // needed for dev tools to work
 window.React = React;
 
-React.render(<App {...stringLib} locales={['en-US']} />,
-  document.getElementById('content-main'));
+Router.run(appRoutes, Handler => {
+  React.render(<Handler />,
+    document.getElementById('content-main'));
+});

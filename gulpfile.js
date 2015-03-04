@@ -5,9 +5,8 @@ var _ = require('lodash');
 var path = require('path');
 var packageConfig = require('./package.json');
 var NAME = packageConfig.name;
+var PORT = packageConfig['dev-port'];
 var posix = require('posix');
-
-var appConfig = require('./app-config');
 
 // todo: clean this up and modularize with variable file name/path
 // handle secrets. Make npm module for this in the future
@@ -28,18 +27,17 @@ var getSecret = function(key) {
 
 var chalk = require('chalk');
 var gulp = require('gulp');
+var shell = require('gulp-shell');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var merge = require('merge-stream');
-
-var browserify = require('browserify');
+var webpack = require('gulp-webpack');
+var babelLoader = require('babel-loader');
+var jsonLoader = require('json-loader');
 var del = require('del');
-var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
-var jshint = require('gulp-jshint');
-var stylish = require('jshint-stylish');
 var sequence = require('run-sequence');
 var gulpif = require('gulp-if');
 var flags = require('minimist')(process.argv.slice(2));
@@ -66,54 +64,8 @@ var logBanner = function(message) {
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
 
-// server deploy
-var rsync = require('gulp-rsync');
-var gulpSSH = (function() {
-  var sshKeyPath = getSecret('sshKeyPath') || '',
-      config, errorMessage;
-
-  errorMessage = function() {
-    console.log(error("Your secret key configuration is invalid. You will not be able to deploy"));
-  };
-
-  if (!fs.existsSync(sshKeyPath)) {
-    errorMessage();
-    return false;
-  }
-
-  config = {
-    ignoreErrors: false,
-    sshConfig: {
-      host: getSecret('hostName'),
-      username: getSecret('userName'),
-      privateKey: require('fs').readFileSync(getSecret('sshKeyPath')),
-      passphrase: getSecret('passPhrase')
-    }
-  };
-
-  var isValid = function(obj) {
-    return _.reduce(obj.sshConfig, function(accumulator, value, key) {
-
-      if (!accumulator) {
-        return false;
-      }
-
-      return accumulator && !_.isEmpty(value);
-    }, true);
-  };
-
-  if (!isValid(config)) {
-    errorMessage();
-    return null;
-  }
-
-  return require('gulp-ssh')(config);
-})();
-
 // environment flags
 var isProduction = flags.production || false;
-var isDeploy = flags.deploy || false;
-var isRollback = flags.rollback || false;
 var watching = flags.watch || false;
 
 //server
@@ -203,23 +155,7 @@ gulp.task('build', function(callback) {
         console.log(message(logBanner("Build Completed")));
         process.exit(0);
       });
-  } else if (isDeploy) {
-    sequence(
-      'ssh-mkdir',
-      'upload',
-      'ssh-unpack',
-      function() {
-        console.log(message(logBanner("Deploy Completed")));
-        process.exit(0);
-      });
-  } else if (isRollback) {
-    sequence(
-      'ssh-rollback',
-      function() {
-        console.log(message(logBanner("Rollback Completed")));
-        process.exit(0);
-      });
-  }
+    }
 });
 
 
@@ -266,24 +202,29 @@ gulp.task('sass', function() {
     .pipe(gulp.dest(paths.devBuild.styles));
 });
 
-// need to do something about jsx before using this
-gulp.task('jshint', function() {
-  return gulp.src([paths.js, paths.jsx])
-  .pipe(plumber())
-  .pipe(jshint('.jshintrc'))
-  .pipe(jshint.reporter(stylish));
-});
-
-
 // build bundle.js
 gulp.task('js', function() {
+  console.log("js Build Start");
 
-  // Browserify/bundle the JS.
-  return browserify(paths.main_js)
-    .transform(babelify)
-    .bundle()
-    .pipe(source('bundle.js'))
-    .pipe(buffer())
+  // bundle the JS
+  return gulp.src(paths.main_js)
+    .pipe(webpack({
+      context: __dirname + '/app',
+      contentBase: __dirname,
+      resolve: {
+        root: __dirname,
+        modulesDirectories: ['app', 'node_modules']
+      },
+      module: {
+        loaders: [
+          {test: /\.json$/, exclude: /node_modules/, loader: 'json-loader'},
+          {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'}
+        ]
+      },
+      output: {
+        filename: 'bundle.js'
+      }
+    }))
     //.pipe(debug({verbose: true}))
     .pipe(gulpif(isProduction, uglify()))
     .pipe(gulp.dest(paths.devBuild.scripts));
@@ -296,115 +237,10 @@ gulp.task('archive', function() {
     .pipe(gulp.dest(paths.prodBuild.dir));
 });
 
-// Quick hack to kill the deploy process if the files do not exists
-var checkUploadRequirements = function() {
-  var filepath = path.join(paths.prodBuild.dir, paths.prodBuild.name) + '.gz';
-
-  //check if dir/archive exist
-  if (!fs.existsSync(filepath)) {
-    console.log( error( logBanner('ERROR')));
-    console.log(error(filepath + ' does not appear to exist.\n Please run "npm run prod" or check your settings\n\n'));
-    process.exit(0);
-  }
-};
-
-//make destination directory on server
-gulp.task('ssh-mkdir', function() {
-  console.log( message( logBanner('Begin SSH-MKDIR')));
-
-  checkUploadRequirements();
-
-  var deployDir = paths.deploy.dir,
-      releaseDir = path.join(deployDir, paths.deploy.releaseDir);
-
-  //todo: improve the way we assign permissions here
-  return gulpSSH
-    .shell([
-      'sudo mkdir -p ' + releaseDir,
-      'sudo chown -R ubuntu. /srv'
-    ], {filePath: 'shell.log'})
-    .pipe(gulp.dest('logs'));
-});
-
-// upload files to destination directory
-gulp.task('upload', function() {
-  console.log( message( logBanner('Begin Deploy')));
-
-  checkUploadRequirements();
-
-  var deployDir = paths.deploy.dir,
-      releaseDir = path.join(deployDir, paths.deploy.releaseDir);
-
-  return gulp.src(path.join(paths.prodBuild.dir, paths.prodBuild.name + '.gz'))
-    .pipe(rsync({
-      hostname: secrets.hostName,
-      username: secrets.userName,
-      destination: releaseDir,
-      incremental: true,
-      args: ['--verbose'],
-      progress: true
-    }, function(error, stdout, stderr, cmd) {
-      console.log(message(stdout));
-      console.log(error(error));
-      console.log(error(stderr));
-      console.log(info(cmd));
-    }));
-});
-
-// TODO: refactor paths in config so rollback and unpack access same values
-// decompress archive and create symlink
-gulp.task('ssh-unpack', function() {
-  console.log( message( logBanner('Begin unpack')));
-
-  var deployDir = paths.deploy.dir,
-      currentDir = path.join(deployDir, paths.deploy.currentDir),
-      releaseDir = path.join(deployDir, paths.deploy.releaseDir),
-      buildDir = path.join(releaseDir, paths.deploy.buildDir),
-      archiveName = paths.prodBuild.name + '.gz';
-
-  return gulpSSH
-    .shell([
-      'TIMESTAMP=$(date +%s)',
-      'DEPLOY_DIR=' + deployDir,
-      'CURRENT_DIR=' + currentDir,
-      'RELEASE_DIR=' + releaseDir + '/' + '$TIMESTAMP',
-      'BUILD_DIR=' + buildDir,
-      'ARCHIVE_NAME=' + archiveName,
-      'if [ ! -e $BUILD_DIR/$ARCHIVE_NAME ]; then echo "Archive does not exist. Exiting"; exit1; fi',
-      'mkdir $RELEASE_DIR',
-      'tar xzf $BUILD_DIR/$ARCHIVE_NAME -C $RELEASE_DIR && rm -rf $BUILD_DIR',
-      'if [ -L $CURRENT_DIR ]; then rm $CURRENT_DIR; fi',
-      'ln -s $RELEASE_DIR $CURRENT_DIR'
-    ], {filePath: 'deploy.log'})
-    .pipe(gulp.dest('logs'));
-});
-
-gulp.task('ssh-rollback', function() {
-  console.log( message( logBanner('Begin rollback')));
-
-  var deployDir = paths.deploy.dir,
-      currentDir = path.join(deployDir, paths.deploy.currentDir),
-      releaseDir = path.join(deployDir, paths.deploy.releaseDir),
-      buildDir = path.join(releaseDir, paths.deploy.buildDir),
-      archiveName = paths.prodBuild.name + '.gz';
-
-  // does not rollback if there is no previous release!!
-  return gulpSSH
-    .shell([
-      'DEPLOY_DIR=' + deployDir,
-      'CURRENT_DIR=' + currentDir,
-      'RELEASE_DIR=' + releaseDir,
-      'DIRS=$(find $RELEASE_DIR -mindepth 1 -maxdepth 1 -type d | sort -r | xargs -n 1 basename)',
-      'set -- $DIRS ; TO_REMOVE=$1 ; PREVIOUS=$2',
-      'if [ $PREVIOUS ]; then rm $CURRENT_DIR; ln -s $RELEASE_DIR/$PREVIOUS $CURRENT_DIR && rm -rf $RELEASE_DIR/$TO_REMOVE; else echo "No Previous Version. Can\'t rollback"; fi'
-    ], {filePath: 'rollback.log'})
-    .pipe(gulp.dest('logs'));
-});
-
 gulp.task('connect', function() {
   connect.server({
     root: paths.dist,
-    port: appConfig.connectPort || 8080
+    port: PORT || 8080
   });
 });
 
@@ -422,9 +258,11 @@ gulp.task('watch', function() {
   gulp.watch('./app/scripts/**/*.jsx', ['js']);
   gulp.watch('./app/scripts/**/*.json', ['js']);
   gulp.watch('./app-config.json', ['js']);
-  gulp.watch('./dist/' + '**/*.{html,css,js}').on('change', function() {
-    console.log(info("watch"), arguments);
-    livereload.changed();
+  gulp.watch('./dist/' + '**/*.{html,css,js}').on('change', function(event) {
+    if (event.type === 'changed') {
+      console.log(info("===========watch triggered============"), arguments);
+      livereload.changed(event);
+    }
   });
 });
 

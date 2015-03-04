@@ -1,10 +1,7 @@
-"use strict";
+'use strict';
 
 var React = require('react');
 var Navigation = require('react-router').Navigation;
-
-var session = require('../modules/session/models/session');
-var sessionActions = require('../modules/session/actions');
 
 var NavLinks = require('../shared/components/nav-links/nav-links.jsx');
 var NavSecondary = React.createClass({

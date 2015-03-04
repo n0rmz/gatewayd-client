@@ -244,6 +244,18 @@
   @include border-top-radius(0);
 }
 
+.top-bar {
+  .nav-primary {
+    float: right;
+    a {
+      &.active,
+      &.active:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 .nav-secondary {
   margin: 0;
   padding: 30px 0 0;
@@ -285,6 +297,7 @@
     color: $navbar-default-link-active-color;
     border: 1px solid $btn-default-border;
     border-radius: 3px;
+    text-decoration: none;
 
     &:hover {
       color: $link-hover-color;

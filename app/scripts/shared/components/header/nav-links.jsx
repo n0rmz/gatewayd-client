@@ -1,28 +1,34 @@
-"use strict";
+'use strict';
 
+var _ = require('lodash');
 var React = require('react');
-var Link = require('react-router').Link;
+var Router = require('react-router');
+var {Route, Redirect, RouteHandler, Link, State} = Router;
+const HandleActiveState = require('scripts/shared/mixins/components/handle-active-state');
 
 /*
   Sample links array:
 
   [
     {
-      text: "Login"
-      href: "/login"
+      text: 'Login',
+      href: '/login'
     },
     {
-      text: "Main"
-      href: "/"
+      text: 'Main',
+      href: '/'
     },
     {
-      text: "Logout"
-      href: "/logout"
+      text: 'Logout',
+      href: '/logout'
     }
   ]
 */
 
 var NavLinks = React.createClass({
+
+  mixins: [State, HandleActiveState],
+
   propTypes: {
     links: React.PropTypes.array,
     navLinksClassName: React.PropTypes.string
@@ -35,10 +41,11 @@ var NavLinks = React.createClass({
   },
 
   getLinks: function(links) {
-    var items = links.map((link, i) => {
+    var items = _.map(links, (link, i) => {
+
       return (
         <li key={i++}>
-          <Link to={link.href}>
+          <Link to={link.href} className={this.handleActiveState(link)}>
             {link.text}
           </Link>
         </li>

@@ -1,8 +1,0 @@
-{
-  "actions": {
-    "reset": "reset",
-    "updateAttributeData": "updateAttributeData",
-    "setAcceptQuoteUrlFromBridgeQuoteUrl": "setAcceptQuoteUrlFromBridgeQuoteUrl",
-    "submitQuote": "submitQuote"
-  }
-}

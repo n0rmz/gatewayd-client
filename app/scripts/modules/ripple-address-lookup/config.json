@@ -1,6 +1,0 @@
-{
-  "actions": {
-    "setFederatedAddress": "setFederatedAddress",
-    "resolveAddress": "resolveAddress"
-  }
-}

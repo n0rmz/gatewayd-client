@@ -1,0 +1,50 @@
+{
+  "baseName": "",
+  "baseUrl": "https://localhost:5000",
+  "status": {
+    "deposits": {
+      "invoice": {
+        "name": "invoice",
+        "navTitle": "transactionFilterInvoice",
+        "message": "Ready to debit sender"
+      },
+      "queued": {
+        "name": "queued",
+        "navTitle": "transactionFilterQueued",
+        "message": "Sending Ripple payment"
+      },
+      "processed": {
+        "name": "processed",
+        "navTitle": "transactionFilterProcessed",
+        "message": "Outgoing transfer sent"
+      },
+      "failed": {
+        "name": "failed",
+        "navTitle": "transactionFilterFailed",
+        "message": "Sender debit failed"
+      }
+    },
+    "withdrawals": {
+      "invoice": {
+        "name": "invoice",
+        "navTitle": "transactionFilterInvoice",
+        "message": "Awaiting Ripple payment"
+      },
+      "queued": {
+        "name": "queued",
+        "navTitle": "transactionFilterQueued",
+        "message": "Ready to credit receiver"
+      },
+      "succeeded": {
+        "name": "succeeded",
+        "navTitle": "transactionFilterSucceeded",
+        "message": "Incoming transfer delivered"
+      },
+      "failed": {
+        "name": "failed",
+        "navTitle": "transactionFilterFailed",
+        "message": "Receiver credit failed"
+      }
+    }
+  }
+}

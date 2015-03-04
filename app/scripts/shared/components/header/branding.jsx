@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var ReactIntl = require('react-intl');
 var IntlMixin = ReactIntl.IntlMixin;
@@ -36,7 +36,7 @@ var Branding = React.createClass({
   render: function() {
     return (
       <div className={this.props.brandingClassName}>
-        <a className="navbar-brand" href="/">
+        <a className='navbar-brand' href='/'>
           {this.getBrandName()}
         </a>
       </div>

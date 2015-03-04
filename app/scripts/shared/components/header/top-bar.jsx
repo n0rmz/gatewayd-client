@@ -2,6 +2,26 @@
 
 var React = require('react');
 var Branding = require('./branding.jsx');
+var NavLinks = require('./nav-links.jsx');
+
+var topNavigation = [
+  {
+    text: 'Get Quote',
+    href: '/get-quote'
+  },
+  {
+    text: 'Manual Transactions',
+    href: '/external-transactions'
+  },
+  {
+    text: 'Accounts',
+    href: '/external-accounts'
+  },
+  {
+    text: 'Ripple',
+    href: '/ripple-transactions'
+  }
+];
 
 var TopBar = React.createClass({
   getDefaultProps: function() {
@@ -27,6 +47,10 @@ var TopBar = React.createClass({
       <div className={this.props.wrapperClassName}>
         <Branding
           wrapperClassName={this.props.brandingClassName}
+        />
+        <NavLinks
+          links={topNavigation}
+          navLinksClassName='nav nav-primary navbar-nav'
         />
       </div>
     );
