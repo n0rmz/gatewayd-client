@@ -5,7 +5,7 @@ var _ = require('lodash');
 var Backbone = require('backbone');
 var adminDispatcher = require('scripts/dispatchers/admin-dispatcher');
 var model = require('../models/balance');
-var appConfig = require('app-config');
+var appConfig = require('app-config.json');
 
 var Balances = Backbone.Collection.extend({
   model: model,

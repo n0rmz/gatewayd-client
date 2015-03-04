@@ -28,10 +28,41 @@ var Payment = React.createClass({
 
   //todo: move this to a parse in the store
   buildStatusMap: function() {
+    const messageStrings = {
+      deposits: {
+        invoice: {
+          message: 'Ready to debit sender'
+        },
+        queued: {
+          message: 'Sending Ripple payment'
+        },
+        processed: {
+          message: 'Outgoing transfer sent'
+        },
+        failed: {
+          message: 'Sender debit failed'
+        }
+      },
+      withdrawals: {
+        invoice: {
+          message: 'Awaiting Ripple payment'
+        },
+        queued: {
+          message: 'Ready to credit receiver'
+        },
+        succeeded: {
+          message: 'Incoming transfer delivered'
+        },
+        failed: {
+          message: 'Receiver credit failed'
+        }
+      }
+    };
+
     var statusMap = {};
 
     // transactionType === withdrawals or deposits
-    _.each(appConfig.status, (statusCollection, transactionType) => {
+    _.each(messageStrings, (statusCollection, transactionType) => {
       statusMap[transactionType] = {};
 
       _.each(statusCollection, (statusDetails, statusName) => {

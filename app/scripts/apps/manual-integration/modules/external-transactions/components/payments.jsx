@@ -78,10 +78,41 @@ let Payments = React.createClass({
   navigationInfoMap: {},
 
   buildNavigationInfoMap: function() {
+    const navigationStrings = {
+      deposits: {
+        invoice: {
+          navTitle: 'transactionFilterInvoice'
+        },
+        queued: {
+          navTitle: 'transactionFilterQueued'
+        },
+        processed: {
+          navTitle: 'transactionFilterProcessed'
+        },
+        failed: {
+          navTitle: 'transactionFilterFailed'
+        }
+      },
+      withdrawals: {
+        invoice: {
+          navTitle: 'transactionFilterInvoice'
+        },
+        queued: {
+          navTitle: 'transactionFilterQueued'
+        },
+        succeeded: {
+          navTitle: 'transactionFilterSucceeded'
+        },
+        failed: {
+          navTitle: 'transactionFilterFailed'
+        }
+      }
+    };
+
     let navigationInfoMap = {};
 
     // transactionType === withdrawals or deposits
-    _.each(appConfig.status, (statusCollection, transactionType) => {
+    _.each(navigationStrings, (statusCollection, transactionType) => {
 
       // navigation includes all 'status' to display every transaction of specific type
       navigationInfoMap[transactionType] = {

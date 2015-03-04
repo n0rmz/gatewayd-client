@@ -21,7 +21,7 @@ var Payment = Backbone.Model.extend({
     destination_currency: '',
     deposit: true, // always true
     external_account_id: 1, // why is this required?
-    status: appConfig.status.deposits.queued.name, // always starts off queued
+    status: 'queued', // always starts off queued
     // ripple_transaction_id: 0,
     // uid: '',
     // data: '',
@@ -142,20 +142,12 @@ var Payment = Backbone.Model.extend({
     });
   },
 
-  flagExternalPaymentAsFailed: function(id) {
-    if (this.get('deposit')) {
-      this.set({
-        status: appConfig.status.deposits.failed.name,
-        source_amount: 0,
-        destination_amount: 0
-      });
-    } else {
-      this.set({
-        status: appConfig.status.withdrawals.failed.name,
-        source_amount: 0,
-        destination_amount: 0
-      });
-    }
+  flagExternalPaymentAsFailed: function() {
+    this.set({
+      status: 'failed',
+      source_amount: 0,
+      destination_amount: 0
+    });
 
     this.updatePayment();
   },
@@ -163,11 +155,11 @@ var Payment = Backbone.Model.extend({
   flagExternalPaymentAsDoneWithEdits: function(updatedAttributes) {
     if (this.get('deposit')) {
       this.set(_.extend(updatedAttributes, {
-        status: appConfig.status.deposits.processed.name
+        status: 'processed'
       }));
     } else {
       this.set(_.extend(updatedAttributes, {
-        status: appConfig.status.withdrawals.succeeded.name
+        status: 'succeeded'
       }));
     }
 
@@ -178,7 +170,7 @@ var Payment = Backbone.Model.extend({
 
   flagExternalPaymentAsInvoicePaid: function(updatedAttributes) {
     this.set(_.extend(updatedAttributes, {
-      status: appConfig.status.deposits.queued.name
+      status: 'queued'
     }));
 
     if (this.isValid()) {
