@@ -95,6 +95,8 @@ var Payment = Backbone.Model.extend({
     if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
       pollingHeart.clearEvents();
       this.trigger('polling', {id: this.id, isPolling: false});
+    } else {
+      this.trigger('polling', {id: this.id, isPolling: true});
     }
   },
 
