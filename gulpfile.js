@@ -207,6 +207,9 @@ gulp.task('js', function() {
   // bundle the JS
   return gulp.src(paths.main_js)
     .pipe(webpack({
+      eslint: {
+        configFile: './.eslintrc'
+      },
       context: __dirname + '/app',
       contentBase: __dirname,
       resolve: {
@@ -216,7 +219,8 @@ gulp.task('js', function() {
       module: {
         loaders: [
           {test: /\.json$/, exclude: /node_modules/, loader: 'json-loader'},
-          {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'}
+          {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'},
+          {test: /\.jsx?$/, exclude: /node_modules/, loader: 'eslint-loader'}
         ]
       },
       output: {
