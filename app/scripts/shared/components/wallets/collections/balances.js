@@ -28,7 +28,7 @@ var Balances = Backbone.Collection.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction.fetchBalance] = this.fetchBalances;
+    handleAction.fetchBalance = this.fetchBalances;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
