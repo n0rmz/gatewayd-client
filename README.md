@@ -2,11 +2,23 @@
 
 The Ripple Connect Client integrates with API endpoints of Ripple Connect to fetch and submit quotes, process external transactions, create external accounts, and view all of the gateway's external and Ripple transactions.
 
-## Quoting Section
+## Table of Contents
+- Description:
+    - **[Quoting Section](#quoting-section)**
+    - **[Accounts Section](#accounts-section)**
+    - **[Ripple Section](#ripple-section)**
+- **[Dependencies](#dependencies)**
+- **[How To Set Up](#how-to-set-up)**
+- **[How To Use Quoting App](#how-to-use-quoting-app)**
+- **[How To Use Manual Integration App](#how-to-use-manual-integration-app)**
+- **[How To Use Ripple App](#how-to-use-ripple-app)**
+- **[Developers](#developers)**
+
+### Quoting Section
 
 The quoting app allows a gateway's external customers to query and accept quotes enabling them to send funds from their account to another customer account at a local or remote gateway.
 
-## Manual Integration Section
+### Manual Integration Section
 
 The banking/manual integration app is a proof of concept that consumes Ripple Connect's endpoints involving external transactions (**/v1/external_transactions**) and external accounts (**/v1/external_accounts**).
 
@@ -18,7 +30,7 @@ Features:
 - Create a gateway account and customer accounts
 - Display accounts and their details
 
-## Accounts Section
+### Accounts Section
 The accounts section integrates with Ripple Connect's api to view and
 create accounts for the gateway features.
 
@@ -26,7 +38,7 @@ Features:
 - View/create gateway accounts
 - View/create Customer Accounts
 
-## Ripple Section
+### Ripple Section
 
 The Ripple Connect Ripple app allows users to send Ripple payments to Ripple addresses.
 
@@ -34,14 +46,6 @@ Features:
 - Monitor incoming/outgoing ripple transactions in real time
 - Check transaction details
 - Send payments (issue currency) to a ripple address or ripple name
-
-### Table of Contents
-- **[Dependencies](#dependencies)**
-- **[How To Set Up](#how-to-set-up)**
-- **[How To Use Quoting App](#how-to-use-quoting-app)**
-- **[How To Use Manual Integration App](#how-to-use-manual-integration-app)**
-- **[How To Use Ripple App](#how-to-use-ripple-app)**
-- **[Developers](#developers)**
 
 ## Dependencies
 
@@ -54,11 +58,11 @@ $ git pull
 $ npm install
 ```
 
-[Ripple Connect Client App - develop branch](git@github.com:ripple/ripple-connect-client-app.git)
+[Ripple Connect Client App - develop branch](git@github.com:ripple/ripple-connect-client.git)
 
 ```
-$ git clone git@github.com:ripple/ripple-connect-client-app.git
-$ cd ripple-connect-client-app
+$ git clone git@github.com:ripple/ripple-connect-client.git
+$ cd ripple-connect-client
 $ git checkout develop
 $ git pull
 $ bower install
@@ -94,16 +98,16 @@ $ npm install
     "Advanced" => "Proceed anyway"
     ```
 
-4. Clone the webapp repo from [Github](git@github.com:ripple/ripple-connect-client-app.git):
+4. Clone the webapp repo from [Github](https://github.com/ripple/ripple-connect-client):
 
     ```
-    $ git clone git@github.com:ripple/ripple-connect-client-app.git
+    $ git clone git@github.com:ripple/ripple-connect-client.git
     ```
 
 5. Navigate to the cloned directory, make sure the branch is correct as per the [app dependencies](#dependencies), and install its dependencies:
 
     ```
-    $ cd ripple-connect-client-app
+    $ cd ripple-connect-client
     $ git checkout develop
     $ npm install
     $ bower install
@@ -121,7 +125,19 @@ $ npm install
             ...
         }
 
-7. Run the gulp build process/live reload server:
+7. Edit the **package.json** file to configure which port you want to run the live reload server from (*dev-port*):
+
+    ```
+    $ vim package.json
+    ```
+
+        {
+            ...
+            "dev-port": "7070",
+            ...
+        }
+
+8. Run the gulp build process/live reload server:
 
     ```
     npm run dev
@@ -133,13 +149,13 @@ $ npm install
     $ ulimit -u 1000
     ```
 
-8. In your browser, access the local webapp via the default url or the port at localhost specified from step 6:
+9. In your browser, access the local webapp via the default url or the port at localhost specified from step 6:
 
     ```
     http://localhost:7070
     ```
 
-9. If you want a production build (make sure you stop the live reload server first):
+10. If you want a production build (make sure you stop the live reload server first):
 
     ```
     npm run prod
