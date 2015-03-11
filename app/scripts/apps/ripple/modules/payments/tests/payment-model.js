@@ -32,14 +32,6 @@ describe('Payment Model:', function() {
         this.model.isValid().should.equal(true);
       });
     });
-
-    describe('should fail when isValid', function() {
-      beforeEach(setUpErroneousModel);
-
-      it('is false', function() {
-        this.model.isValid().should.equal(false);
-      });
-    });
   });
 
   describe('should have required attributes:', function() {

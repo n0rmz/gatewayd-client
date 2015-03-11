@@ -78,6 +78,9 @@ var validationMixin = {
     }
 
     var errors = [];
+    var _isValidator = this.isValidator;
+    var _env = this;
+    var _validators = this.validators;
 
     _.each(rule.validators, test => {
       if (errors.length) {
@@ -102,8 +105,8 @@ var validationMixin = {
       args.unshift(val);
 
       //ensure validation method exists
-      if (this.isValidator(valMethod)) {
-        var result = this.validators[valMethod].apply(this, args);
+      if (_isValidator(valMethod)) {
+        var result = _validators[valMethod].apply(_env, args);
 
         //only push when false or string
         if (!result || _.isString(result)) {
@@ -143,14 +146,16 @@ var validationMixin = {
 
   validate: function(data) {
     var errors = [];
+    var _validationRules = this.validationRules;
+    var _testValid = this.testValid;
 
     _.each(data, (val, key) => {
       var error = {},
           message;
 
       //check if it needs to be validated
-      if (this.validationRules[key]) {
-        message = this.testValid(val, key, this.validationRules[key]);
+      if (_validationRules[key]) {
+        message = _testValid(val, key, _validationRules[key]);
       }
 
       if (message) {

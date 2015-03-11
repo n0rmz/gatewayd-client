@@ -1,21 +1,35 @@
 var data = {
-  bob: {
-    id: 1,
-    source_account_id: 2,
-    source_amount: 500,
-    source_currency: 'USD',
-    destination_account_id: 77,
-    destination_amount: 999,
-    destination_currency: 'XRP',
-    deposit: true,
-    external_account_id: 335,
-    status: 'cleared',
-    ripple_transaction_id: 90,
-    uid: '?',
-    data: '?',
-    invoice_id: 'SHA-256',
-    memos: '?'
-  }
+    success: true,
+    bridge_payments: [
+        {
+            state: 'quote',
+            created: '2015-03-10T00:22:40.605Z',
+            source: {
+                uri: 'acct:test1@localhost:5000',
+                address: 'rhY5y4NB7A1TuKgVNrRoSfk41uZasmbDnS',
+                account_number: 1111
+            },
+            wallet_payment: {
+                destination: 'rphrLBy39abbhUTta1CWtHryYHVcvrTWeX?dt=3',
+                primary_amount: {
+                    amount: 1,
+                    currency: 'XRP',
+                    issuer: ''
+                },
+                destination_account_number: '4123'
+            },
+            destination: {
+                uri: 'acct:test2@localhost:5000'
+            },
+            destination_amount: {
+                amount: 1,
+                currency: 'XRP',
+                issuer: ''
+            },
+            parties: {},
+            uuid: '38e48a98-7e6d-4a39-ab49-528da78af959'
+        }
+    ]
 };
 
 module.exports = data;
