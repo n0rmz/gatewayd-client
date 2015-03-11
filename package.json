@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "./node_modules/.bin/gulp --watch",
     "prod": "./node_modules/.bin/gulp --production",
-    "test": "./node_modules/.bin/mocha -R nyan ./app/scripts/**/tests/*.js"
+    "test": "./node_modules/.bin/mocha --harmony -R nyan ./app/scripts/**/tests/*.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "ripple-name": "0.1.3"
   },
   "devDependencies": {
+    "app-root-path": "^1.0.0",
     "babel-core": "^4.4.6",
     "babel-loader": "^4.0.0",
     "bower": "^1.3.12",
