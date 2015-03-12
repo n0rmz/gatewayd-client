@@ -5,11 +5,9 @@ var $ = require('jquery');
 var heartbeats = require('heartbeats');
 
 var Backbone = require('backbone');
+var ValidationMixins = require('scripts/shared/mixins/models/validation-mixin');
 
-var reqlib = require('app-root-path').require;
-var ValidationMixins = reqlib('/app/scripts/shared/mixins/models/validation-mixin');
-var adminDispatcher = reqlib('/app/scripts/dispatchers/admin-dispatcher');
-var appConfig = reqlib('/app/app-config.json');
+var adminDispatcher = require('scripts/dispatchers/admin-dispatcher');
 
 var pollingHeart = new heartbeats.Heart(5000);
 
