@@ -1,6 +1,5 @@
 'use strict';
 
-var path = require('path');
 var _ = require('lodash');
 var ReactIntl = require('react-intl');
 var IntlMixin = ReactIntl.IntlMixin;
@@ -8,7 +7,6 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 var React = require('react');
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var $ = require('jquery');
 var Actions = require('scripts/actions');
 var AddressModel = require('../models/ripple-address');
 var addressModel = new AddressModel();
@@ -46,7 +44,7 @@ var RippleAddressLookup = React.createClass({
   setAddress: function(model, address) {
     this.clearInputState();
 
-    //update dom
+    // update dom
     this.setState({federatedAddress: address});
   },
 
@@ -61,12 +59,14 @@ var RippleAddressLookup = React.createClass({
   },
 
   findQuoteLink: function(links) {
-    var findKey = 'https://gatewayd.org/gateway-services/bridge_payments';
 
-    //given links object, return the bridge quote link
-    //NOTE: 'template' is likely to change to 'ref' when updated to spec
+    // this is less than optimal. The api should be more deterministic imo
+    var findKey = /gateway-services\/bridge_payments$/;
+
+    // given links object, return the bridge quote link
+    // NOTE: 'template' is likely to change to 'ref' when updated to spec
     return _.find(links, function(link) {
-      return link.rel === findKey;
+      return link.rel.match(findKey);
     }).template;
   },
 
@@ -77,13 +77,14 @@ var RippleAddressLookup = React.createClass({
       return false;
     }
 
-    //get data from model and pass to success/callback
-    this.handleSuccess(model.get('federatedAddress'), this.findQuoteLink(links));
+    // get data from model and pass to success/callback
+    this.handleSuccess(model.get('federatedAddress'),
+                       this.findQuoteLink(links));
   },
 
   handleSuccess: function(address, link) {
 
-    //handle optional callback
+    // handle optional callback
     if (this.props.onSuccessCb) {
       this.props.onSuccessCb({
         bridgeQuoteUrl: link,
@@ -135,16 +136,19 @@ var RippleAddressLookup = React.createClass({
 
     label = <FormattedMessage message={this.getIntlMessage('senderLabel')} />;
 
-    //todo: set this up for all alert types
-    //won't localize errors at this time
-    //strings returned from server
+    // todo: set this up for all alert types
+    // won't localize errors at this time
+    // strings returned from server
     alert = (this.state.inputState === 'error') ?
       <div className='alert alert-danger'>
         {this.state.message}
       </div> : false;
 
     return (
-      <form onSubmit={this.handleSubmit} className={this.props.wrapperClassName}>
+      <form
+        onSubmit={this.handleSubmit}
+        className={this.props.wrapperClassName}
+      >
         <div className='form-group'>
           <Input
             disabled={!isActive}
